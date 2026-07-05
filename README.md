@@ -1,2 +1,2 @@
-# die-workout-plan
+# diet-workout-plan
 personal health app
