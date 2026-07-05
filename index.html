@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personal Diet & Workout Plan</title>
+  <!-- Google Fonts for General Sans and DM Sans / Noto Sans Bengali fallback -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Noto+Sans+Bengali:wght@100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+  <style>
+    /* Design Tokens matching the JSX */
+    :root {
+      --primary: #2563EB;
+      --primary-hover: #1D4ED8;
+      --neutral: #94A3B8;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --text: #0F172A;
+      --text2: #64748B;
+      --border: #E2E8F0;
+      --success: #10B981;
+      --font-display: 'General Sans', 'Noto Sans Bengali', sans-serif;
+      --font-body: 'DM Sans', 'Noto Sans Bengali', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Core Layout */
+    .g-root {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    button,
+    .g-card,
+    .meal-card,
+    .exercise-card,
+    .rule-item,
+    .tip-card {
+      min-width: 0;
+    }
+
+    /* Header */
+    header {
+      background-color: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+    }
+
+    .brand h1 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    /* Buttons */
+    .btn {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 150ms ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn:hover {
+      border-color: var(--neutral);
+      background-color: var(--bg);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: #FFFFFF;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+      border-color: var(--primary-hover);
+    }
+
+    .btn-lang {
+      font-weight: 600;
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-lang:hover {
+      background-color: #EFF6FF;
+    }
+
+    /* Navigation / Tabs */
+    .nav-tabs {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .nav-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-tab {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 0.75rem 1rem;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all 150ms ease;
+      white-space: nowrap;
+    }
+
+    .nav-tab:hover {
+      color: var(--text);
+    }
+
+    .nav-tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    /* Day Selector Row */
+    .day-selector {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .day-btn {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem 0.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+
+    .day-btn:hover {
+      border-color: var(--neutral);
+      transform: translateY(-1px);
+    }
+
+    .day-btn.active {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: #FFFFFF;
+    }
+
+    .day-btn .day-short {
+      font-weight: 700;
+      font-size: 1.1rem;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .day-btn .day-full {
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
+
+    /* Grid Layouts */
+    .g-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: box-shadow 200ms ease, transform 200ms ease;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .g-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Day Header stats */
+    .day-summary-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .day-title-area h2 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .day-stats-area {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .stat-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: var(--bg);
+      border: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .stat-badge .label {
+      color: var(--text2);
+      font-size: 0.85rem;
+    }
+
+    .stat-badge .val {
+      color: var(--primary);
+      font-family: var(--font-mono);
+    }
+
+    /* Two Columns for Diet and Workout */
+    .plan-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .plan-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .column-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Meal card */
+    .meal-card {
+      border-left: 4px solid transparent;
+      padding: 1rem;
+      border-radius: 8px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+
+    .meal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .meal-time-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+    }
+
+    .meal-cal {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .meal-detail {
+      font-size: 0.85rem;
+      color: var(--text2);
+      margin-bottom: 0.5rem;
+    }
+
+    .meal-items-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .meal-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+      margin-bottom: 0.4rem;
+      overflow-wrap: anywhere;
+    }
+
+    .meal-item::before {
+      content: "•";
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    /* Workout Info */
+    .workout-meta {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .workout-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .tip-box {
+      border-left: 3px solid var(--primary);
+      background-color: #EFF6FF;
+      padding: 0.75rem 1rem;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      color: #1E40AF;
+    }
+
+    .tip-box-title {
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    /* Exercises list */
+    .exercise-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 150ms ease;
+    }
+
+    .exercise-card:hover {
+      border-color: var(--neutral);
+    }
+
+    .exercise-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      min-width: 0;
+    }
+
+    .exercise-emoji {
+      font-size: 1.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--bg);
+      border-radius: 50%;
+    }
+
+    .exercise-name {
+      font-weight: 700;
+      font-size: 1rem;
+      overflow-wrap: anywhere;
+    }
+
+    .exercise-detail {
+      font-size: 0.85rem;
+      color: var(--text2);
+      overflow-wrap: anywhere;
+    }
+
+    .exercise-sets {
+      font-family: var(--font-mono);
+      background-color: var(--bg);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    /* Rules Tab View */
+    .rules-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .rule-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      transition: all 150ms ease;
+    }
+
+    .rule-item:hover {
+      border-color: var(--neutral);
+    }
+
+    .rule-checkbox {
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+      border: 2px solid var(--neutral);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #FFFFFF;
+      transition: all 150ms ease;
+    }
+
+    .rule-checkbox.checked {
+      background-color: var(--success);
+      border-color: var(--success);
+    }
+
+    .rule-text {
+      font-size: 1.05rem;
+      font-weight: 500;
+      overflow-wrap: anywhere;
+    }
+
+    .rule-item.checked .rule-text {
+      text-decoration: line-through;
+      color: var(--text2);
+    }
+
+    /* Tips Tab View */
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .tip-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 200ms ease;
+    }
+
+    .tip-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transform: translateY(-2px);
+    }
+
+    .tip-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .tip-icon {
+      font-size: 1.75rem;
+      background-color: var(--bg);
+      width: 3rem;
+      height: 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+    }
+
+    .tip-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .tip-body {
+      font-size: 0.95rem;
+      color: var(--text2);
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: auto;
+      text-align: center;
+      padding: 2rem 0;
+      color: var(--text2);
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    /* Animations */
+    .fade-in {
+      animation: fadeIn 200ms ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 720px) {
+      body {
+        font-size: 14px;
+      }
+
+      .container {
+        padding: 1rem;
+      }
+
+      .header-content {
+        gap: 0.75rem;
+        align-items: flex-start;
+      }
+
+      .brand h1 {
+        font-size: 1.2rem;
+        line-height: 1.25;
+      }
+
+      .btn {
+        padding: 0.45rem 0.75rem;
+      }
+
+      .nav-tabs {
+        margin: 0 -1rem 1rem;
+        padding: 0 1rem;
+      }
+
+      .nav-tab {
+        padding: 0.7rem 0.85rem;
+        font-size: 0.95rem;
+      }
+
+      .day-selector {
+        display: flex;
+        gap: 0.5rem;
+        margin: 0 -1rem 1rem;
+        padding: 0 1rem 0.25rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+
+      .day-selector::-webkit-scrollbar {
+        display: none;
+      }
+
+      .day-btn {
+        flex: 0 0 4.75rem;
+        padding: 0.65rem 0.45rem;
+      }
+
+      .day-btn .day-short {
+        font-size: 1rem;
+      }
+
+      .day-btn .day-full {
+        font-size: 0.72rem;
+      }
+
+      .g-card,
+      .tip-card {
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .day-summary-card {
+        align-items: stretch;
+      }
+
+      .day-title-area,
+      .day-stats-area {
+        width: 100%;
+      }
+
+      .day-title-area h2 {
+        font-size: 1.25rem;
+      }
+
+      .day-stats-area {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+      }
+
+      .stat-badge {
+        justify-content: center;
+        padding: 0.5rem;
+        border-radius: 12px;
+      }
+
+      .column-title {
+        font-size: 1.1rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .meal-card,
+      .exercise-card,
+      .rule-item {
+        padding: 0.85rem;
+      }
+
+      .meal-header {
+        align-items: flex-start;
+      }
+
+      .meal-cal {
+        white-space: nowrap;
+      }
+
+      .workout-meta {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .workout-badge {
+        justify-content: center;
+      }
+
+      .exercise-card {
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+
+      .exercise-emoji {
+        width: 2.25rem;
+        height: 2.25rem;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+      }
+
+      .exercise-sets {
+        margin-top: 0.1rem;
+      }
+
+      .rules-list {
+        gap: 0.75rem;
+      }
+
+      .rule-checkbox {
+        flex: 0 0 1.5rem;
+      }
+
+      .rule-text {
+        font-size: 0.98rem;
+      }
+
+      .tips-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .container {
+        padding: 0.75rem;
+      }
+
+      .header-content {
+        padding: 0.75rem 0;
+      }
+
+      .brand h1 {
+        font-size: 1.05rem;
+      }
+
+      .nav-tabs,
+      .day-selector {
+        margin-left: -0.75rem;
+        margin-right: -0.75rem;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+      }
+
+      .day-stats-area {
+        grid-template-columns: 1fr;
+      }
+
+      .stat-badge {
+        justify-content: space-between;
+      }
+
+      .meal-header,
+      .exercise-card {
+        flex-direction: column;
+      }
+
+      .exercise-sets {
+        align-self: flex-start;
+      }
+
+      .tip-header {
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body class="g-root">
+  <header>
+    <div class="container header-content">
+      <div class="brand">
+        <h1 id="app-title">Diet & Workout Plan</h1>
+      </div>
+      <div class="controls">
+        <button id="lang-btn" class="btn btn-lang" onclick="toggleLanguage()">বাংলা</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Main Tabs -->
+    <div class="nav-tabs">
+      <button id="tab-daily" class="nav-tab active" onclick="switchTab('daily')">Daily Plan</button>
+      <button id="tab-rules" class="nav-tab" onclick="switchTab('rules')">Weekly Rules</button>
+      <button id="tab-tips" class="nav-tab" onclick="switchTab('tips')">Health Tips</button>
+    </div>
+
+    <!-- Daily Plan View -->
+    <div id="view-daily" class="tab-view fade-in">
+      <!-- Days Grid -->
+      <div class="day-selector" id="day-selector">
+        <!-- Generated Dynamically -->
+      </div>
+
+      <!-- Active Day Stats Card -->
+      <div class="g-card day-summary-card" id="day-summary-card">
+        <!-- Generated Dynamically -->
+      </div>
+
+      <!-- Two Column Plan -->
+      <div class="plan-grid">
+        <!-- Diet Column -->
+        <div class="diet-column">
+          <h3 class="column-title">
+            <span>🥗</span> <span id="diet-col-title">Diet Plan</span>
+          </h3>
+          <div id="meals-container">
+            <!-- Generated Dynamically -->
+          </div>
+        </div>
+
+        <!-- Workout Column -->
+        <div class="workout-column">
+          <h3 class="column-title">
+            <span>💪</span> <span id="workout-col-title">Workout Routine</span>
+          </h3>
+          <div id="workout-container">
+            <!-- Generated Dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rules View -->
+    <div id="view-rules" class="tab-view fade-in" style="display: none;">
+      <div class="g-card">
+        <div class="rules-list" id="rules-container">
+          <!-- Generated Dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Tips View -->
+    <div id="view-tips" class="tab-view fade-in" style="display: none;">
+      <div class="tips-grid" id="tips-container">
+        <!-- Generated Dynamically -->
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p id="footer-text">Personal health companion. Honoring healthy lifestyle guidelines daily.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Bilingual Helper
+    const b = (en, bn) => ({ en, bn });
+
+    const DAYS = [
+      { en: "Sun", bn: "রবি", fullEn: "Sunday", fullBn: "রবিবার" },
+      { en: "Mon", bn: "সোম", fullEn: "Monday", fullBn: "সোমবার" },
+      { en: "Tue", bn: "মঙ্গল", fullEn: "Tuesday", fullBn: "মঙ্গলবার" },
+      { en: "Wed", bn: "বুধ", fullEn: "Wednesday", fullBn: "বুধবার" },
+      { en: "Thu", bn: "বৃহঃ", fullEn: "Thursday", fullBn: "বৃহস্পতিবার" },
+      { en: "Fri", bn: "শুক্র", fullEn: "Friday", fullBn: "শুক্রবার" },
+      { en: "Sat", bn: "শনি", fullEn: "Saturday", fullBn: "শনিবার" },
+    ];
+
+    const DIET = [
+      // Sunday
+      {
+        calories: 1600,
+        protein: 118,
+        meals: [
+          {
+            time: b("Breakfast", "সকাল"),
+            detail: b("7–8 AM", "সকাল ৭–৮টা"),
+            icon: "🌅",
+            cal: 360,
+            items: [
+              b("2 scrambled eggs", "২টি স্ক্র্যাম্বলড ডিম"),
+              b("2 slices whole grain toast", "২ স্লাইস হোল গ্রেইন পাউরুটি"),
+              b("Black coffee or herbal tea", "ব্ল্যাক কফি বা হার্বাল চা"),
+            ]
+          },
+          {
+            time: b("Lunch", "দুপুর"),
+            detail: b("12:30–1:30 PM", "দুপুর ১২:৩০–১:৩০"),
+            icon: "☀️",
+            cal: 570,
+            items: [
+              b("Beef curry — lean chuck (150g)", "গরুর মাংসের ঝোল — লিন কাট (১৫০গ্রাম)"),
+              b("1 cup basmati rice", "১ কাপ বাসমতি ভাত"),
+              b("Masoor dal", "মসুর ডাল"),
+              b("Mixed vegetable stir fry", "মিশ্র সবজি ভাজি"),
+            ]
+          },
+          {
+            time: b("Snack", "বিকেল"),
+            detail: b("3:30–4:30 PM", "বিকেল ৩:৩০–৪:৩০"),
+            icon: "🍎",
+            cal: 160,
+            items: [
+              b("Greek yogurt plain (150g)", "গ্রিক দই প্লেইন (১৫০গ্রাম)"),
+              b("Mixed berries — blueberry & strawberry", "মিশ্র বেরি — ব্লুবেরি ও স্ট্রবেরি"),
+            ]
+          },
+          {
+            time: b("Dinner", "রাত"),
+            detail: b("7–8 PM", "রাত ৭–৮টা"),
+            icon: "🌙",
+            cal: 510,
+            items: [
+              b("2 whole wheat roti", "২টি গমের আটার রুটি"),
+              b("Grilled chicken (100g)", "গ্রিলড চিকেন (১০০গ্রাম)"),
+              b("Lentil soup (dal)", "ডাল স্যুপ"),
+              b("Cucumber & tomato salad", "শসা ও টমেটো সালাদ"),
+            ]
+          }
+        ]
+      },
+      // Monday
+      {
+        calories: 1520,
+        protein: 115,
+        meals: [
+          {
+            time: b("Breakfast", "সকাল"),
+            detail: b("7–8 AM", "সকাল ৭–৮টা"),
+            icon: "🌅",
+            cal: 320,
+            items: [
+              b("Oatmeal with banana", "ওটমিল ও কলা"),
+              b("1 tsp honey", "১ চামচ মধু"),
+              b("Black coffee", "ব্ল্যাক কফি"),
+            ]
+          },
+          {
+            time: b("Lunch", "দুপুর"),
+            detail: b("12:30–1:30 PM", "দুপুর ১২:৩০–১:৩০"),
+            icon: "☀️",
+            cal: 480,
+            items: [
+              b("Grilled chicken breast stir fry (150g)", "গ্রিলড চিকেন ব্রেস্ট স্টার ফ্রাই (১৫০গ্রাম)"),
+              b("½ cup brown rice", "আধা কাপ ব্রাউন রাইস"),
+              b("Broccoli & bell pepper", "ব্রকলি ও ক্যাপসিকাম"),
+              b("Low-sodium soy sauce + garlic", "কম লবণের সয় সস + রসুন"),
+            ]
+          },
+          {
+            time: b("Snack", "বিকেল"),
+            detail: b("3:30–4:30 PM", "বিকেল ৩:৩০–৪:৩০"),
+            icon: "🍎",
+            cal: 160,
+            items: [
+              b("1 apple", "১টি আপেল"),
+              b("10–12 almonds", "১০–১২টি আমন্ড বাদাম"),
+            ]
+          },
+          {
+            time: b("Dinner", "রাত"),
+            detail: b("7–8 PM", "রাত ৭–৮টা"),
+            icon: "🌙",
+            cal: 560,
+            items: [
+              b("Mung dal (মুগ ডাল)", "মুগ ডাল"),
+              b("2 wheat roti", "২টি গমের রুটি"),
+              b("2 boiled eggs", "২টি সিদ্ধ ডিম"),
+              b("Cucumber salad with lemon", "শসার সালাদ ও লেবু"),
+            ]
+          }
+        ]
+      },
+      // Tuesday
+      {
+        calories: 1580,
+        protein: 122,
+        meals: [
+          {
+            time: b("Breakfast", "সকাল"),
+            detail: b("7–8 AM", "সকাল ৭–৮টা"),
+            icon: "🌅",
+            cal: 380,
+            items: [
+              b("2 eggs any style", "২টি ডিম যেকোনো ভাবে"),
+              b("2 slices whole grain toast", "২ স্লাইস হোল গ্রেইন পাউরুটি"),
+              b("½ avocado", "আধা অ্যাভোকাডো"),
+              b("Green tea or coffee", "গ্রিন টি বা কফি"),
+            ]
+          },
+          {
+            time: b("Lunch", "দুপুর"),
+            detail: b("12:30–1:30 PM", "দুপুর ১২:৩০–১:৩০"),
+            icon: "☀️",
+            cal: 520,
+            items: [
+              b("Grilled Atlantic salmon (170g)", "গ্রিলড অ্যাটলান্টিক স্যালমন (১৭০গ্রাম)"),
+              b("Baked sweet potato", "বেকড মিষ্টি আলু"),
+              b("Spinach & cherry tomato salad", "পালং শাক ও চেরি টমেটো সালাদ"),
+              b("Lemon dressing (no mayo)", "লেবুর ড্রেসিং (মেয়ো ছাড়া)"),
+            ]
+          },
+          {
+            time: b("Snack", "বিকেল"),
+            detail: b("3:30–4:30 PM", "বিকেল ৩:৩০–৪:৩০"),
+            icon: "🍎",
+            cal: 150,
+            items: [
+              b("Greek yogurt + blueberries", "গ্রিক দই + ব্লুবেরি"),
+            ]
+          },
+          {
+            time: b("Dinner", "রাত"),
+            detail: b("7–8 PM", "রাত ৭–৮টা"),
+            icon: "🌙",
+            cal: 530,
+            items: [
+              b("Masoor dal soup", "মসুর ডালের স্যুপ"),
+              b("2 whole grain roti", "২টি হোল গ্রেইন রুটি"),
+              b("Chicken bhuna — light oil (100g)", "চিকেন ভুনা — অল্প তেলে (১০০গ্রাম)"),
+              b("Stir fried korola / begun", "করলা বা বেগুন ভাজি"),
+            ]
+          }
+        ]
+      },
+      // Wednesday
+      {
+        calories: 1560,
+        protein: 116,
+        meals: [
+          {
+            time: b("Breakfast", "সকাল"),
+            detail: b("7–8 AM", "সকাল ৭–৮টা"),
+            icon: "🌅",
+            cal: 340,
+            items: [
+              b("Greek yogurt parfait + granola", "গ্রিক দই পারফেট + গ্রানোলা"),
+              b("Seasonal fruits — mango or banana", "মৌসুমী ফল — আম বা কলা"),
+              b("Black coffee or green tea", "ব্ল্যাক কফি বা গ্রিন টি"),
+            ]
+          },
+          {
+            time: b("Lunch", "দুপুর"),
+            detail: b("12:30–1:30 PM", "দুপুর ১২:৩০–১:৩০"),
+            icon: "☀️",
+            cal: 520,
+            items: [
+              b("Lamb curry — lean leg cut (150g)", "ভেড়ার মাংসের ঝোল — লিন লেগ কাট (১৫০গ্রাম)"),
+              b("Cauliflower rice", "ফুলকপি রাইস"),
+              b("Bell peppers + onions + garlic", "ক্যাপসিকাম + পেঁয়াজ + রসুন"),
+              b("Cumin + chili flakes seasoning", "জিরা + লাল মরিচ মশলা"),
+            ]
+          },
+          {
+            time: b("Snack", "বিকেল"),
+            detail: b("3:30–4:30 PM", "বিকেল ৩:৩০–৪:৩০"),
+            icon: "🍎",
+            cal: 160,
+            items: [
+              b("Mixed unsalted nuts — almonds & walnuts", "মিশ্র বাদাম — আমন্ড ও ওয়ালনাট"),
+            ]
+          },
+          {
+            time: b("Dinner", "রাত"),
+            detail: b("7–8 PM", "রাত ৭–৮টা"),
+            icon: "🌙",
+            cal: 540,
+            items: [
+              b("Mung dal + 2 roti", "মুগ ডাল + ২টি রুটি"),
+              b("1 boiled egg", "১টি সিদ্ধ ডিম"),
+              b("Sautéed mixed vegetables", "সবজি ভাজি মিশ্রণ"),
+              b("Cucumber raita (yogurt + cucumber)", "কুকুম্বার রাইতা"),
+            ]
+          }
+        ]
+      },
+      // Thursday
+      {
+        calories: 1540,
+        protein: 114,
+        meals: [
+          {
+            time: b("Breakfast", "সকাল"),
+            detail: b("7–8 AM", "সকাল ৭–৮টা"),
+            icon: "🌅",
+            cal: 310,
+            items: [
+              b("Oatmeal + mixed berries", "ওটমিল + মিশ্র বেরি"),
+              b("1 tsp honey", "১ চামচ মধু"),
+              b("Black coffee", "ব্ল্যাক কফি"),
+            ]
+          },
+          {
+            time: b("Lunch", "দুপুর"),
+            detail: b("12:30–1:30 PM", "দুপুর ১২:৩০–১:৩০"),
+            icon: "☀️",
+            cal: 490,
+            items: [
+              b("Beef & vegetable soup (lean chuck)", "গরুর মাংস ও সবজির স্যুপ"),
+              b("Carrots, celery, potato (small)", "গাজর, সেলেরি, আলু (ছোট)"),
+              b("1 slice whole grain bread", "১ স্লাইস হোল গ্রেইন পাউরুটি"),
+            ]
+          },
+          {
+            time: b("Snack", "বিকেল"),
+            detail: b("3:30–4:30 PM", "বিকেল ৩:৩০–৪:৩০"),
+            icon: "🍎",
+            cal: 110,
+            items: [
+              b("1 banana", "১টি কলা"),
+            ]
+          },
+          {
+            time: b("Dinner", "রাত"),
+            detail: b("7–8 PM", "রাত ৭–৮টা"),
+            icon: "🌙",
+            cal: 630,
+            items: [
+              b("½ cup rice + masoor dal", "আধা কাপ ভাত + মসুর ডাল"),
+              b("2 boiled eggs", "২টি সিদ্ধ ডিম"),
+              b("Stir fried spinach (পালং শাক)", "পালং শাক ভাজি"),
+            ]
+          }
+        ]
+      },
+      // Friday
+      {
+        calories: 1560,
+        protein: 120,
+        meals: [
+          {
+            time: b("Breakfast", "সকাল"),
+            detail: b("7–8 AM", "সকাল ৭–৮টা"),
+            icon: "🌅",
+            cal: 350,
+            items: [
+              b("Smoothie: banana + spinach + Greek yogurt", "স্মুদি: কলা + পালং শাক + গ্রিক দই"),
+              b("1 tbsp peanut butter", "১ চামচ পিনাট বাটার"),
+            ]
+          },
+          {
+            time: b("Lunch", "দুপুর"),
+            detail: b("12:30–1:30 PM", "দুপুর ১২:৩০–১:৩০"),
+            icon: "☀️",
+            cal: 470,
+            items: [
+              b("Grilled chicken burger patty — no bun (150g)", "গ্রিলড চিকেন বার্গার প্যাটি — বান ছাড়া (১৫০গ্রাম)"),
+              b("Lettuce, tomato, pickled onion", "লেটুস, টমেটো, পিকলড পেঁয়াজ"),
+              b("Baked sweet potato fries", "বেকড মিষ্টি আলু ফ্রাই"),
+              b("Side salad — lemon dressing", "সাইড সালাদ — লেমন ড্রেসিং"),
+            ]
+          },
+          {
+            time: b("Snack", "বিকেল"),
+            detail: b("3:30–4:30 PM", "বিকেল ৩:৩০–৪:৩০"),
+            icon: "🍎",
+            cal: 160,
+            items: [
+              b("Apple + 1 tbsp peanut butter", "আপেল + ১ চামচ পিনাট বাটার"),
+            ]
+          },
+          {
+            time: b("Dinner", "রাত"),
+            detail: b("7–8 PM", "রাত ৭–৮টা"),
+            icon: "🌙",
+            cal: 580,
+            items: [
+              b("1 roti + mung dal (light)", "১টি রুটি + পাতলা মুগ ডাল"),
+              b("Grilled tilapia or pangash (120g)", "গ্রিলড তেলাপিয়া বা পাঙাশ (১২০গ্রাম)"),
+              b("Steamed broccoli & carrots", "স্টিমড ব্রকলি ও গাজর"),
+              b("Cucumber & tomato salad", "শসা ও টমেটো সালাদ"),
+            ]
+          }
+        ]
+      },
+      // Saturday
+      {
+        calories: 1540,
+        protein: 117,
+        meals: [
+          {
+            time: b("Breakfast", "সকাল"),
+            detail: b("7–8 AM", "সকাল ৭–৮টা"),
+            icon: "🌅",
+            cal: 360,
+            items: [
+              b("2 eggs scrambled or poached", "২টি ডিম স্ক্র্যাম্বলড বা পোচ"),
+              b("2 whole grain toast", "২ স্লাইস হোল গ্রেইন পাউরুটি"),
+              b("Black coffee", "ব্ল্যাক কফি"),
+            ]
+          },
+          {
+            time: b("Lunch", "দুপুর"),
+            detail: b("12:30–1:30 PM", "দুপুর ১২:৩০–১:৩০"),
+            icon: "☀️",
+            cal: 560,
+            items: [
+              b("Lean beef steak — sirloin (150g)", "লিন বিফ স্টেক — সার্লয়েন (১৫০গ্রাম)"),
+              b("Roasted vegetables: zucchini, carrot, broccoli", "রোস্টেড সবজি: জুকিনি, গাজর, ব্রকলি"),
+              b("Garden salad, lemon dressing", "গার্ডেন সালাদ, লেমন ড্রেসিং"),
+            ]
+          },
+          {
+            time: b("Snack", "বিকেল"),
+            detail: b("3:30–4:30 PM", "বিকেল ৩:৩০–৪:৩০"),
+            icon: "🍎",
+            cal: 100,
+            items: [
+              b("Mixed berries — blueberry & raspberry", "মিশ্র বেরি — ব্লুবেরি ও রাসবেরি"),
+            ]
+          },
+          {
+            time: b("Dinner", "রাত"),
+            detail: b("7–8 PM", "রাত ৭–৮টা"),
+            icon: "🌙",
+            cal: 520,
+            items: [
+              b("½ cup rice + rohu / hilsa fish curry", "আধা কাপ ভাত + রুই বা ইলিশ মাছের ঝোল"),
+              b("Masoor dal", "মসুর ডাল"),
+              b("Bottle gourd (লাউ) stir fry", "লাউ সবজি ভাজি"),
+            ]
+          }
+        ]
+      }
+    ];
+
+    const WORKOUT = [
+      // Sunday
+      {
+        type: b("Active Rest", "সক্রিয় বিশ্রাম"),
+        duration: b("35 min", "৩৫ মিনিট"),
+        focus: b("Recovery", "পুনরুদ্ধার"),
+        tip: b("The Trans Canada Trail is minutes from your door — an easy Sunday walk there resets your legs for Monday's lifting.", "ট্রান্স কানাডা ট্রেইল আপনার বাসার পাশেই — রবিবারের সহজ হাঁটা সোমবারের ওয়েট ট্রেনিংয়ের জন্য পা প্রস্তুত করে।"),
+        exercises: [
+          { name: b("Trail Walk (easy)", "ট্রেইলে সহজ হাঁটা"), detail: b("30 min on the Trans Canada Trail, relaxed pace", "ট্রান্স কানাডা ট্রেইলে ৩০ মিনিট, আরামদায়ক গতিতে"), sets: null, emoji: "🚶" },
+          { name: b("Full Body Stretch", "ফুল বডি স্ট্রেচ"), detail: b("10 min — hips, hamstrings, chest, back", "১০ মিনিট — কোমর, হ্যামস্ট্রিং, বুক, পিঠ"), sets: null, emoji: "🧘" },
+        ]
+      },
+      // Monday
+      {
+        type: b("Strength · Push", "শক্তি · পুশ"),
+        duration: b("40 min", "৪০ মিনিট"),
+        focus: b("Chest · Shoulders · Triceps", "বুক · কাঁধ · ট্রাইসেপ"),
+        tip: b("When you complete all sets at the top of the rep range with good form, add 2.5 kg next week. That's how muscle is built.", "সব সেটে সর্বোচ্চ রেপ সঠিকভাবে করতে পারলে পরের সপ্তাহে ২.৫ কেজি বাড়ান। এভাবেই পেশি তৈরি হয়।"),
+        exercises: [
+          { name: b("Dumbbell Floor Press", "ডাম্বেল ফ্লোর প্রেস"), detail: b("4 sets × 8–10 reps", "৪ সেট × ৮–১০ বার"), sets: "4×8–10", emoji: "🏋️" },
+          { name: b("Dumbbell Overhead Press", "ডাম্বেল ওভারহেড প্রেস"), detail: b("3 sets × 8–10 reps", "৩ সেট × ৮–১০ বার"), sets: "3×8–10", emoji: "💪" },
+          { name: b("Push-up", "পুশআপ"), detail: b("3 sets × max reps", "৩ সেট × সর্বোচ্চ বার"), sets: "3×max", emoji: "🤸" },
+          { name: b("Dumbbell Lateral Raise", "ডাম্বেল ল্যাটারাল রেইজ"), detail: b("3 sets × 12–15 reps, light weight", "৩ সেট × ১২–১৫ বার, হালকা ওজনে"), sets: "3×12–15", emoji: "🕊️" },
+        ]
+      },
+      // Tuesday
+      {
+        type: b("Cardio · Trail", "কার্ডিও · ট্রেইল"),
+        duration: b("40 min", "৪০ মিনিট"),
+        focus: b("Intervals · Fat Burn", "ইন্টারভাল · চর্বি পোড়ানো"),
+        tip: b("Intervals burn more in 40 minutes than a slow hour. In winter, swap for stair climbs + jumping jacks indoors.", "ইন্টারভাল ৪০ মিনিটে ধীর এক ঘণ্টার চেয়ে বেশি ক্যালোরি পোড়ায়। শীতে ঘরে সিঁড়ি ভাঙা + জাম্পিং জ্যাক করুন।"),
+        exercises: [
+          { name: b("Warm-up Walk", "ওয়ার্ম-আপ হাঁটা"), detail: b("5 min easy pace", "৫ মিনিট সহজ গতি"), sets: null, emoji: "🌿" },
+          { name: b("Walk / Jog Intervals", "হাঁটা / জগিং ইন্টারভাল"), detail: b("10 × (1 min fast / 1 min easy) on the trail", "ট্রেইলে ১০ × (১ মিনিট দ্রুত / ১ মিনিট ধীরে)"), sets: "10 rounds", emoji: "🏃" },
+          { name: b("Cool-down Walk", "কুলডাউন হাঁটা"), detail: b("10 min slow + light stretch", "১০ মিনিট ধীরে + হালকা স্ট্রেচ"), sets: null, emoji: "🚶" },
+        ]
+      },
+      // Wednesday
+      {
+        type: b("Strength · Pull", "শক্তি · পুল"),
+        duration: b("40 min", "৪০ মিনিট"),
+        focus: b("Back · Biceps · Core", "পিঠ · বাইসেপ · কোর"),
+        tip: b("A strong back fixes desk-developer posture. Squeeze your shoulder blades together at the top of every row.", "শক্ত পিঠ ডেস্কে বসা ডেভেলপারের ভঙ্গি ঠিক করে। প্রতিটি রো-এর শেষে কাঁধের হাড় একসাথে চেপে ধরুন।"),
+        exercises: [
+          { name: b("Barbell Bent-over Row", "বারবেল বেন্ট-ওভার রো"), detail: b("4 sets × 8–10 reps", "৪ সেট × ৮–১০ বার"), sets: "4×8–10", emoji: "🏋️" },
+          { name: b("One-arm Dumbbell Row", "এক হাতে ডাম্বেল রো"), detail: b("3 sets × 10 reps each side", "৩ সেট × প্রতি পাশে ১০ বার"), sets: "3×10", emoji: "💪" },
+          { name: b("Dumbbell Curl", "ডাম্বেল কার্ল"), detail: b("3 sets × 10–12 reps", "৩ সেট × ১০–১২ বার"), sets: "3×10–12", emoji: "🦾" },
+          { name: b("Plank", "প্ল্যাংক"), detail: b("3 sets × 45 seconds", "৩ সেট × ৪৫ সেকেন্ড"), sets: "3×45s", emoji: "🤸" },
+        ]
+      },
+      // Thursday
+      {
+        type: b("Cardio · Bike", "কার্ডিও · সাইকেল"),
+        duration: b("50 min", "৫০ মিনিট"),
+        focus: b("Steady Ride", "স্থির গতির রাইড"),
+        tip: b("From Bayshore, ride the trail toward Andrew Haydon Park along the river. In winter, do a 30-min indoor circuit instead.", "বেশোর থেকে নদীর ধারে অ্যান্ড্রু হেইডন পার্কের দিকে সাইকেল চালান। শীতে ৩০ মিনিটের ইনডোর সার্কিট করুন।"),
+        exercises: [
+          { name: b("Bike Ride", "সাইকেল রাইড"), detail: b("45–50 min steady pace — you should be able to talk, barely", "৪৫–৫০ মিনিট স্থির গতি — কথা বলা যায় এমন কষ্টে"), sets: null, emoji: "🚴" },
+          { name: b("Post-ride Stretch", "রাইডের পরে স্ট্রেচ"), detail: b("5 min — quads, hips, lower back", "৫ মিনিট — উরু, কোমর, নিচের পিঠ"), sets: null, emoji: "🧘" },
+        ]
+      },
+      // Friday
+      {
+        type: b("Strength · Legs", "শক্তি · পা"),
+        duration: b("40 min", "৪০ মিনিট"),
+        focus: b("Legs · Glutes", "পা · গ্লুট"),
+        tip: b("Legs are your biggest muscles — training them burns the most calories all week. Never skip Friday.", "পা শরীরের সবচেয়ে বড় পেশি — এদের ট্রেনিং সারা সপ্তাহে সবচেয়ে বেশি ক্যালোরি পোড়ায়। শুক্রবার কখনো বাদ দেবেন না।"),
+        exercises: [
+          { name: b("Barbell / Goblet Squat", "বারবেল / গবলেট স্কোয়াট"), detail: b("4 sets × 8–10 reps", "৪ সেট × ৮–১০ বার"), sets: "4×8–10", emoji: "🦵" },
+          { name: b("Romanian Deadlift", "রোমানিয়ান ডেডলিফট"), detail: b("3 sets × 10 reps — barbell", "৩ সেট × ১০ বার — বারবেল"), sets: "3×10", emoji: "🏋️" },
+          { name: b("Walking Lunge (dumbbells)", "ওয়াকিং লাঞ্জ (ডাম্বেল)"), detail: b("3 sets × 10 each leg", "৩ সেট × প্রতি পায়ে ১০ বার"), sets: "3×10", emoji: "🚶" },
+          { name: b("Calf Raise", "কাফ রেইজ"), detail: b("3 sets × 15 reps, holding dumbbells", "৩ সেট × ১৫ বার, ডাম্বেল হাতে"), sets: "3×15", emoji: "🦶" },
+        ]
+      },
+      // Saturday
+      {
+        type: b("Long Ride / Hike", "লম্বা রাইড / হাইক"),
+        duration: b("60–90 min", "৬০–৯০ মিনিট"),
+        focus: b("Endurance", "সহনশীলতা"),
+        tip: b("Make Saturday the fun one — explore a new stretch of the trail each week. This is your biggest calorie burn.", "শনিবারকে মজার দিন বানান — প্রতি সপ্তাহে ট্রেইলের নতুন অংশ ঘুরে দেখুন। এটাই সপ্তাহের সবচেয়ে বড় ক্যালোরি বার্ন।"),
+        exercises: [
+          { name: b("Long Bike Ride or Trail Hike", "লম্বা সাইকেল রাইড বা ট্রেইল হাইক"), detail: b("60–90 min on the Trans Canada Trail", "ট্রান্স কানাডা ট্রেইলে ৬০–৯০ মিনিট"), sets: null, emoji: "🌲" },
+          { name: b("Optional: Light Circuit", "ঐচ্ছিক: হালকা সার্কিট"), detail: b("2 rounds — 15 squats, 10 push-ups, 30s plank", "২ রাউন্ড — ১৫ স্কোয়াট, ১০ পুশআপ, ৩০ সেকেন্ড প্ল্যাংক"), sets: "2 rounds", emoji: "🔁" },
+          { name: b("Full Body Stretch", "ফুল বডি স্ট্রেচ"), detail: b("10 min", "১০ মিনিট"), sets: null, emoji: "🧘" },
+        ]
+      }
+    ];
+
+    const RULES = {
+      en: [
+        "Drink 8–10 glasses of water daily",
+        "Kitchen closes at 9 PM — brush your teeth after dinner",
+        "No sugary drinks — soda, juice, or sweetened cha",
+        "Avoid deep-fried and ultra-processed food",
+        "Hit your protein number first, every day (~115–120g)",
+        "Eat slowly — you're full before you feel it",
+      ],
+      bn: [
+        "প্রতিদিন ৮–১০ গ্লাস পানি পান করুন",
+        "রাত ৯টায় রান্নাঘর বন্ধ — রাতের খাবারের পরে দাঁত ব্রাশ করুন",
+        "চিনিযুক্ত পানীয় নয় — কোলা, জুস বা মিষ্টি চা নয়",
+        "ডুবো তেলে ভাজা ও প্রক্রিয়াজাত খাবার এড়িয়ে চলুন",
+        "প্রতিদিন আগে প্রোটিন লক্ষ্য পূরণ করুন (~১১৫–১২০ গ্রাম)",
+        "ধীরে ধীরে খান — পেট ভরার অনুভূতি দেরিতে আসে",
+      ]
+    };
+
+    const TIPS = [
+      {
+        emoji: "💻",
+        title: b("Beat the desk", "ডেস্কের বিরুদ্ধে লড়ুন"),
+        body: b(
+          "Remote desk work is the real enemy. Stand and walk 5 minutes every hour (set a timer), take calls while pacing, and aim for 8,000 steps a day — the trail at Bayshore makes this easy.",
+          "রিমোট ডেস্ক কাজই আসল শত্রু। প্রতি ঘণ্টায় ৫ মিনিট উঠে হাঁটুন (টাইমার দিন), কল হাঁটতে হাঁটতে নিন, দিনে ৮,০০০ স্টেপের লক্ষ্য রাখুন — বেশোরের ট্রেইল এটা সহজ করে দেয়..."
+        ),
+      },
+      {
+        emoji: "🍚",
+        title: b("The Bangladeshi plate hack", "বাংলাদেশি প্লেটের কৌশল"),
+        body: b(
+          "Keep the food you love, change the ratios: half the rice, double the vegetables and dal. Cook bhuna with 1 tsp oil instead of ½ cup. At dawats, eat protein and salad first, then take one small plate of the rest — no seconds.",
+          "প্রিয় খাবার রাখুন, অনুপাত বদলান: ভাত অর্ধেক, সবজি ও ডাল দ্বিগুণ। ভুনায় আধা কাপ তেলের বদলে ১ চামচ ব্যবহার করুন। দাওয়াতে আগে প্রোটিন ও সালাদ খান, তারপর বাকি সব এক ছোট প্লেট — দ্বিতীয়বার নয়।"
+        ),
+      },
+      {
+        emoji: "🏋️",
+        title: b("Progressive overload", "প্রগ্রেসিভ ওভারলোড"),
+        body: b(
+          "Muscle only grows if the weight grows. Log every lift in a note. When you finish all sets at the top of the rep range, add 2.5 kg. Your 50 kg set will last months this way.",
+          "ওজন না বাড়লে পেশি বাড়ে না। প্রতিটি লিফট নোটে লিখে রাখুন। সব সেটে সর্বোচ্চ রেপ পূরণ হলে ২.৫ কেজি বাড়ান। এভাবে আপনার ৫০ কেজির সেট মাসের পর মাস কাজে লাগবে।"
+        ),
+      },
+      {
+        emoji: "🥚",
+        title: b("Protein protects muscle", "প্রোটিন পেশি রক্ষা করে"),
+        body: b(
+          "In a calorie deficit, protein is what decides whether you lose fat or muscle. Eggs, chicken, fish, dal, and Greek yogurt should appear in every meal. Target ~115–120g per day.",
+          "ক্যালোরি ঘাটতিতে প্রোটিনই ঠিক করে আপনি চর্বি হারাবেন নাকি পেশি। প্রতি বেলায় ডিম, মুরগি, মাছ, ডাল বা গ্রিক দই রাখুন। দৈনিক লক্ষ্য ~১১৫–১২০ গ্রাম।"
+        ),
+      },
+      {
+        emoji: "❄️",
+        title: b("Ottawa winter plan", "অটোয়ার শীতকালীন পরিকল্পনা"),
+        body: b(
+          "Cycling season is roughly April–October. From November to March, swap bike days for indoor dumbbell circuits, stair climbs, or a layered-up winter walk on the trail. The plan doesn't pause for snow.",
+          "সাইক্লিং মৌসুম মোটামুটি এপ্রিল–অক্টোবর। নভেম্বর–মার্চে সাইকেলের দিনে ইনডোর ডাম্বেল সার্কিট, সিঁড়ি ভাঙা, বা গরম কাপড়ে ট্রেইলে হাঁটুন। বরফের জন্য পরিকল্পনা থামবে না।"
+        ),
+      },
+      {
+        emoji: "⚖️",
+        title: b("Weigh in weekly, not daily", "প্রতিদিন নয়, সপ্তাহে একবার ওজন মাপুন"),
+        body: b(
+          "Weigh yourself once a week, same day, in the morning — daily numbers bounce around and only stress you out. 76 → 65 kg by December means roughly 0.5 kg per week: steady, achievable, and no crash dieting needed.",
+          "সপ্তাহে একবার, একই দিনে, সকালে ওজন মাপুন — প্রতিদিনের সংখ্যা ওঠানামা করে শুধু চাপ বাড়ায়। ডিসেম্বরের মধ্যে ৭৬ → ৬৫ কেজি মানে সপ্তাহে প্রায় ০.৫ কেজি: স্থির, অর্জনযোগ্য, ক্র্যাশ ডায়েটের দরকার নেই।"
+        ),
+      },
+      {
+        emoji: "😴",
+        title: b("Sleep is a training day", "ঘুমও ট্রেনিংয়ের অংশ"),
+        body: b(
+          "7–8 hours of sleep. Late-night coding sessions are where hidden snack calories live, and poor sleep spikes hunger the next day. Muscle is built in bed, not just under the barbell.",
+          "৭–৮ ঘণ্টা ঘুমান। গভীর রাতের কোডিং সেশনেই লুকানো স্ন্যাকের ক্যালোরি ঢোকে, আর কম ঘুম পরদিন ক্ষুধা বাড়ায়। পেশি বারবেলের নিচে নয়, ঘুমের মধ্যে তৈরি হয়।"
+        ),
+      }
+    ];
+
+    const MEAL_ACCENT = [
+      { bg: "#FFF7ED", fg: "#C2410C" }, // Sunrise Amber
+      { bg: "#EFF6FF", fg: "#1D4ED8" }, // Midday Blue
+      { bg: "#F0FDFA", fg: "#0F766E" }, // Fresh Teal
+      { bg: "#F5F3FF", fg: "#6D28D9" }  // Evening Violet
+    ];
+
+    const CAT = {
+      recovery: { fg: "#0F766E", bg: "#F0FDFA", emoji: "🧘" },
+      strength: { fg: "#1D4ED8", bg: "#EFF6FF", emoji: "🏋️" },
+      cardio: { fg: "#C2410C", bg: "#FFF7ED", emoji: "🏃" },
+      endurance: { fg: "#6D28D9", bg: "#F5F3FF", emoji: "🚴" }
+    };
+
+    const DAY_CAT = ["recovery", "strength", "cardio", "strength", "cardio", "strength", "endurance"];
+
+    // App State
+    let currentLang = 'en'; // 'en' or 'bn'
+    let currentDayIndex = 0; // Sunday by default
+
+    // Language Toggle
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'bn' : 'en';
+      document.getElementById('lang-btn').innerText = currentLang === 'en' ? 'বাংলা' : 'English';
+      updateUI();
+    }
+
+    // Tab Navigation
+    function switchTab(tabName) {
+      document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-view').forEach(view => view.style.display = 'none');
+
+      if (tabName === 'daily') {
+        document.getElementById('tab-daily').classList.add('active');
+        document.getElementById('view-daily').style.display = 'block';
+      } else if (tabName === 'rules') {
+        document.getElementById('tab-rules').classList.add('active');
+        document.getElementById('view-rules').style.display = 'block';
+      } else if (tabName === 'tips') {
+        document.getElementById('tab-tips').classList.add('active');
+        document.getElementById('view-tips').style.display = 'block';
+      }
+      updateUI();
+    }
+
+    // Day Switch
+    function setDay(index) {
+      currentDayIndex = index;
+      updateUI();
+    }
+
+    // UI Translation & Content Render Helper
+    function updateUI() {
+      // Translations
+      const translations = {
+        title: b("Diet & Workout Plan", "ডায়েট ও ওয়ার্কআউট পরিকল্পনা"),
+        dietTitle: b("Diet Plan", "খাবার তালিকা"),
+        workoutTitle: b("Workout Routine", "ব্যায়াম রুটিন"),
+        calories: b("Calories", "ক্যালোরি"),
+        protein: b("Protein", "প্রোটিন"),
+        duration: b("Duration", "সময়কাল"),
+        focus: b("Focus", "মূল ফোকাস"),
+        tipTitle: b("Pro-Tip", "পরামর্শ"),
+        footer: b("Personal health companion. Honoring healthy lifestyle guidelines daily.", "ব্যক্তিগত স্বাস্থ্য সঙ্গী। প্রতিদিন স্বাস্থ্যকর জীবনযাপনের নিয়ম মেনে চলুন।")
+      };
+
+      document.getElementById('app-title').innerText = translations.title[currentLang];
+      document.getElementById('diet-col-title').innerText = translations.dietTitle[currentLang];
+      document.getElementById('workout-col-title').innerText = translations.workoutTitle[currentLang];
+      document.getElementById('footer-text').innerText = translations.footer[currentLang];
+
+      // Translate Tab Buttons
+      document.getElementById('tab-daily').innerText = b("Daily Plan", "দৈনিক পরিকল্পনা")[currentLang];
+      document.getElementById('tab-rules').innerText = b("Weekly Rules", "সাপ্তাহিক নিয়মাবলী")[currentLang];
+      document.getElementById('tab-tips').innerText = b("Health Tips", "স্বাস্থ্য টিপস")[currentLang];
+
+      // 1. Render Day Selector Cards
+      const daySelector = document.getElementById('day-selector');
+      daySelector.innerHTML = '';
+      DAYS.forEach((day, idx) => {
+        const btn = document.createElement('div');
+        btn.className = `day-btn ${idx === currentDayIndex ? 'active' : ''}`;
+        btn.onclick = () => setDay(idx);
+        btn.innerHTML = `
+          <span class="day-short">${currentLang === 'en' ? day.en : day.bn}</span>
+          <span class="day-full">${currentLang === 'en' ? day.fullEn : day.fullBn}</span>
+        `;
+        daySelector.appendChild(btn);
+      });
+
+      // 2. Render Day Summary Stats
+      const activeDay = DAYS[currentDayIndex];
+      const activeDiet = DIET[currentDayIndex];
+      const activeWorkout = WORKOUT[currentDayIndex];
+      const catKey = DAY_CAT[currentDayIndex];
+      const catInfo = CAT[catKey];
+
+      const summaryCard = document.getElementById('day-summary-card');
+      summaryCard.innerHTML = `
+        <div class="day-title-area">
+          <h2>${currentLang === 'en' ? activeDay.fullEn : activeDay.fullBn}</h2>
+        </div>
+        <div class="day-stats-area">
+          <div class="stat-badge">
+            <span class="label">🔥 ${translations.calories[currentLang]}</span>
+            <span class="val">${activeDiet.calories} kcal</span>
+          </div>
+          <div class="stat-badge">
+            <span class="label">🥚 ${translations.protein[currentLang]}</span>
+            <span class="val">${activeDiet.protein}g</span>
+          </div>
+        </div>
+      `;
+
+      // 3. Render Meals
+      const mealsContainer = document.getElementById('meals-container');
+      mealsContainer.innerHTML = '';
+      activeDiet.meals.forEach((meal, idx) => {
+        const accent = MEAL_ACCENT[idx % MEAL_ACCENT.length];
+        const card = document.createElement('div');
+        card.className = 'meal-card';
+        card.style.borderLeftColor = accent.fg;
+
+        const itemsHTML = meal.items.map(item => `
+          <li class="meal-item">${item[currentLang]}</li>
+        `).join('');
+
+        card.innerHTML = `
+          <div class="meal-header">
+            <span class="meal-time-title" style="color: ${accent.fg}">
+              <span>${meal.icon}</span> ${meal.time[currentLang]}
+            </span>
+            <span class="meal-cal" style="background-color: ${accent.bg}; color: ${accent.fg}">
+              ${meal.cal} kcal
+            </span>
+          </div>
+          <div class="meal-detail">${meal.detail[currentLang]}</div>
+          <ul class="meal-items-list">
+            ${itemsHTML}
+          </ul>
+        `;
+        mealsContainer.appendChild(card);
+      });
+
+      // 4. Render Workout
+      const workoutContainer = document.getElementById('workout-container');
+      workoutContainer.innerHTML = '';
+
+      // Workout header badges
+      const metaHTML = `
+        <div class="workout-meta">
+          <div class="workout-badge" style="background-color: ${catInfo.bg}; color: ${catInfo.fg}">
+            <span>${catInfo.emoji}</span> <span>${activeWorkout.type[currentLang]}</span>
+          </div>
+          <div class="workout-badge" style="background-color: var(--bg); color: var(--text2); border: 1px solid var(--border)">
+            <span>⏱️</span> <span>${translations.duration[currentLang]}: ${activeWorkout.duration[currentLang]}</span>
+          </div>
+          <div class="workout-badge" style="background-color: var(--bg); color: var(--text2); border: 1px solid var(--border)">
+            <span>🎯</span> <span>${translations.focus[currentLang]}: ${activeWorkout.focus[currentLang]}</span>
+          </div>
+        </div>
+      `;
+
+      // Tip box
+      const tipHTML = `
+        <div class="tip-box">
+          <div class="tip-box-title">💡 ${translations.tipTitle[currentLang]}</div>
+          <div>${activeWorkout.tip[currentLang]}</div>
+        </div>
+      `;
+
+      // Exercises list
+      const exercisesHTML = activeWorkout.exercises.map(ex => `
+        <div class="exercise-card">
+          <div class="exercise-info">
+            <span class="exercise-emoji">${ex.emoji}</span>
+            <div>
+              <div class="exercise-name">${ex.name[currentLang]}</div>
+              <div class="exercise-detail">${ex.detail[currentLang]}</div>
+            </div>
+          </div>
+          ${ex.sets ? `<span class="exercise-sets">${ex.sets}</span>` : ''}
+        </div>
+      `).join('');
+
+      workoutContainer.innerHTML = metaHTML + tipHTML + exercisesHTML;
+
+      // 5. Render Rules
+      const rulesContainer = document.getElementById('rules-container');
+      rulesContainer.innerHTML = '';
+      const activeRulesList = RULES[currentLang];
+      activeRulesList.forEach((rule, idx) => {
+        // Read checkbox state from localStorage or default unchecked
+        const storageKey = `rule-checked-${currentLang}-${idx}`;
+        const isChecked = localStorage.getItem(storageKey) === 'true';
+
+        const ruleItem = document.createElement('div');
+        ruleItem.className = `rule-item ${isChecked ? 'checked' : ''}`;
+        ruleItem.innerHTML = `
+          <div class="rule-checkbox ${isChecked ? 'checked' : ''}" onclick="toggleRuleCheckbox(this, '${currentLang}', ${idx})">
+            ✓
+          </div>
+          <span class="rule-text">${rule}</span>
+        `;
+        rulesContainer.appendChild(ruleItem);
+      });
+
+      // 6. Render Tips
+      const tipsContainer = document.getElementById('tips-container');
+      tipsContainer.innerHTML = '';
+      TIPS.forEach(tip => {
+        const card = document.createElement('div');
+        card.className = 'tip-card';
+        card.innerHTML = `
+          <div class="tip-header">
+            <span class="tip-icon">${tip.emoji}</span>
+            <h4 class="tip-title">${tip.title[currentLang]}</h4>
+          </div>
+          <p class="tip-body">${tip.body[currentLang]}</p>
+        `;
+        tipsContainer.appendChild(card);
+      });
+    }
+
+    // Rules Interaction
+    function toggleRuleCheckbox(element, lang, idx) {
+      const storageKey = `rule-checked-${lang}-${idx}`;
+      const isChecked = element.classList.contains('checked');
+
+      if (isChecked) {
+        element.classList.remove('checked');
+        element.parentElement.classList.remove('checked');
+        localStorage.setItem(storageKey, 'false');
+      } else {
+        element.classList.add('checked');
+        element.parentElement.classList.add('checked');
+        localStorage.setItem(storageKey, 'true');
+      }
+    }
+
+    // Initialize UI
+    window.addEventListener('DOMContentLoaded', () => {
+      // Auto-set active day based on actual current day of the week!
+      const systemDayIndex = new Date().getDay();
+      currentDayIndex = systemDayIndex; // Auto match Sunday(0) to Saturday(6)
+      updateUI();
+    });
+  </script>
+</body>
+</html>
