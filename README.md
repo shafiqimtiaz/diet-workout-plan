@@ -1,32 +1,88 @@
-# React + TypeScript + Vite
+# 🥗 Diet & Workout Plan
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+AI-powered personalized diet and workout planner. Set your target daily calories, and Google Gemini generates a detailed 7-day meal plan and workout routine — bilingual in English and Bengali.
 
-Currently, two official plugins are available:
+**[🔗 diet-workout-plan.vercel.app](https://diet-workout-plan.vercel.app/)**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **AI-generated plans** — Google Gemini creates weekly diet + workout plans tailored to your calorie target, cuisine preferences (Bangladeshi + Western), and home gym setup
+- **Bilingual** — Every meal, exercise, and tip is in English and Bengali. Toggle with one click
+- **Calorie input** — Type any target (1200–4000 cal) and the entire 7-day plan regenerates
+- **Caching** — Plans are cached by calorie value; revisiting a previous target is instant
+- **Smart fallback** — Without an API key, shows a detailed static 7-day plan (beef curry, salmon, dumbbell presses, trail runs…)
+- **Model fallback chain** — On quota/rate-limit errors, automatically retries with delay, then falls through `gemini-2.5-flash-lite` → `gemini-3.0-flash` → `gemini-3.1-flash-lite`
+- **Responsive** — Two-column layout on desktop, single-column on mobile with horizontal day scroller
+- **Weekly rules** — 6 health rules with checkable progress tracker
+- **Health tips** — 7 curated cards covering desk-work posture, Bangladeshi plate hacks, progressive overload, Ottawa winter training, and sleep
 
-## Expanding the Oxlint configuration
+---
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+## Quick Start
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+
+# Get a free Gemini API key: https://aistudio.google.com/apikey
+echo "VITE_GEMINI_API_KEY=your_key_here" > .env
+
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Open [http://localhost:5173](http://localhost:5173). Type a calorie target in the header, watch the plan regenerate.
+
+Without an API key, the app runs with the built-in static plan — no setup needed.
+
+---
+
+## Architecture
+
+```
+src/
+├── main.tsx                    # Entry point
+├── App.tsx                     # Root: language state, tab routing
+├── index.css                   # Design tokens + responsive styles
+├── types/plan.ts               # TypeScript types
+├── services/gemini.ts          # Gemini API + retry chain + JSON parsing
+├── hooks/useGeminiPlan.ts      # Calorie → plan state machine
+├── data/fallbackPlan.ts        # Static 7-day plan (used when API unavailable)
+└── components/
+    ├── Header.tsx              # Calorie input + language toggle
+    ├── TabNav.tsx              # Daily / Rules / Tips tabs
+    ├── DailyPlan.tsx           # Diet + workout two-column layout
+    ├── DaySelector.tsx         # 7-day pill selector
+    ├── DaySummary.tsx          # Calories + protein badges
+    ├── MealCard.tsx            # Color-coded meal card
+    ├── ExerciseCard.tsx        # Exercise row with emoji + sets badge
+    ├── RulesList.tsx           # Checkable weekly rules
+    └── TipsGrid.tsx            # Health tip cards
+```
+
+---
+
+## How the AI prompt works
+
+Gemini receives a structured prompt specifying:
+- **Persona:** Professional nutritionist + fitness coach
+- **Location:** Ottawa, Bayshore, Trans Canada Trail, Andrew Haydon Park
+- **Cuisine:** Bangladeshi (bhuna, dal, roti, fish curry…) + Western (salmon, steak, oatmeal…)
+- **Equipment:** Dumbbells, barbell, bench, bike, trail access
+- **Week structure:** Sun=Rest, Mon=Push, Tue=Trail cardio, Wed=Pull, Thu=Bike, Fri=Legs, Sat=Endurance
+- **Detail rules:** 3-4 items per meal with exact portions, 3-4 exercises with technique cues, location-specific coach tips
+
+The response is parsed into typed `WeeklyPlan` objects and cached by calorie value.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | React 19 + TypeScript |
+| Build | Vite 8 |
+| Styling | CSS custom properties (design tokens) |
+| AI | Google Gemini (`gemini-2.5-flash-lite`) |
+| Fonts | DM Sans, Noto Sans Bengali, JetBrains Mono |
+| Deploy | Vercel |
