@@ -1,4 +1,4 @@
-export type SupportedLanguage = 'en' | 'bn';
+export type SupportedLanguage = "en" | "bn";
 
 export interface Bilingual {
   en: string;
@@ -51,11 +51,11 @@ export interface DayMeta {
 }
 
 export const DAY_NAMES: DayMeta[] = [
-  { en: 'Sun', bn: 'রবি', fullEn: 'Sunday', fullBn: 'রবিবার' },
-  { en: 'Mon', bn: 'সোম', fullEn: 'Monday', fullBn: 'সোমবার' },
-  { en: 'Tue', bn: 'মঙ্গল', fullEn: 'Tuesday', fullBn: 'মঙ্গলবার' },
-  { en: 'Wed', bn: 'বুধ', fullEn: 'Wednesday', fullBn: 'বুধবার' },
-  { en: 'Thu', bn: 'বৃহঃ', fullEn: 'Thursday', fullBn: 'বৃহস্পতিবার' },
-  { en: 'Fri', bn: 'শুক্র', fullEn: 'Friday', fullBn: 'শুক্রবার' },
-  { en: 'Sat', bn: 'শনি', fullEn: 'Saturday', fullBn: 'শনিবার' },
+  { en: "Sun", bn: "রবি", fullEn: "Sunday", fullBn: "রবিবার" },
+  { en: "Mon", bn: "সোম", fullEn: "Monday", fullBn: "সোমবার" },
+  { en: "Tue", bn: "মঙ্গল", fullEn: "Tuesday", fullBn: "মঙ্গলবার" },
+  { en: "Wed", bn: "বুধ", fullEn: "Wednesday", fullBn: "বুধবার" },
+  { en: "Thu", bn: "বৃহঃ", fullEn: "Thursday", fullBn: "বৃহস্পতিবার" },
+  { en: "Fri", bn: "শুক্র", fullEn: "Friday", fullBn: "শুক্রবার" },
+  { en: "Sat", bn: "শনি", fullEn: "Saturday", fullBn: "শনিবার" },
 ];

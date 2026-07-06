@@ -1,17 +1,17 @@
 /* ===== Design Tokens ===== */
 :root {
-  --primary: #2563EB;
-  --primary-hover: #1D4ED8;
-  --neutral: #94A3B8;
-  --bg: #F8FAFC;
-  --surface: #FFFFFF;
-  --text: #0F172A;
-  --text2: #64748B;
-  --border: #E2E8F0;
-  --success: #10B981;
-  --font-display: 'General Sans', 'Noto Sans Bengali', sans-serif;
-  --font-body: 'DM Sans', 'Noto Sans Bengali', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --neutral: #94a3b8;
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --text: #0f172a;
+  --text2: #64748b;
+  --border: #e2e8f0;
+  --success: #10b981;
+  --font-display: "General Sans", "Noto Sans Bengali", sans-serif;
+  --font-body: "DM Sans", "Noto Sans Bengali", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
 }
 
 * {
@@ -132,14 +132,16 @@ header {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* API Error banner */
 .api-banner {
-  background: #FEF3C7;
-  border: 1px solid #F59E0B;
-  color: #92400E;
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  color: #92400e;
   padding: 0.75rem 1rem;
   border-radius: 8px;
   margin-bottom: 1rem;
@@ -178,7 +180,7 @@ header {
 }
 
 .btn-lang:hover {
-  background-color: #EFF6FF;
+  background-color: #eff6ff;
 }
 
 /* ===== Navigation Tabs ===== */
@@ -192,7 +194,9 @@ header {
   scrollbar-width: none;
 }
 
-.nav-tabs::-webkit-scrollbar { display: none; }
+.nav-tabs::-webkit-scrollbar {
+  display: none;
+}
 
 .nav-tab {
   background: none;
@@ -208,7 +212,9 @@ header {
   white-space: nowrap;
 }
 
-.nav-tab:hover { color: var(--text); }
+.nav-tab:hover {
+  color: var(--text);
+}
 
 .nav-tab.active {
   color: var(--primary);
@@ -241,7 +247,7 @@ header {
 .day-btn.active {
   background-color: var(--primary);
   border-color: var(--primary);
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 .day-btn .day-short {
@@ -301,8 +307,14 @@ header {
   font-weight: 600;
 }
 
-.stat-badge .label { color: var(--text2); font-size: 0.85rem; }
-.stat-badge .val { color: var(--primary); font-family: var(--font-mono); }
+.stat-badge .label {
+  color: var(--text2);
+  font-size: 0.85rem;
+}
+.stat-badge .val {
+  color: var(--primary);
+  font-family: var(--font-mono);
+}
 
 /* ===== Two-Column Grid ===== */
 .plan-grid {
@@ -362,7 +374,10 @@ header {
   margin-bottom: 0.5rem;
 }
 
-.meal-items-list { list-style: none; padding-left: 0; }
+.meal-items-list {
+  list-style: none;
+  padding-left: 0;
+}
 
 .meal-item {
   display: flex;
@@ -400,12 +415,12 @@ header {
 
 .tip-box {
   border-left: 3px solid var(--primary);
-  background-color: #EFF6FF;
+  background-color: #eff6ff;
   padding: 0.75rem 1rem;
   border-radius: 0 8px 8px 0;
   margin-bottom: 1rem;
   font-size: 0.9rem;
-  color: #1E40AF;
+  color: #1e40af;
 }
 
 .tip-box-title {
@@ -426,7 +441,9 @@ header {
   transition: all 150ms ease;
 }
 
-.exercise-card:hover { border-color: var(--neutral); }
+.exercise-card:hover {
+  border-color: var(--neutral);
+}
 
 .exercise-info {
   display: flex;
@@ -487,7 +504,9 @@ header {
   cursor: pointer;
 }
 
-.rule-item:hover { border-color: var(--neutral); }
+.rule-item:hover {
+  border-color: var(--neutral);
+}
 
 .rule-checkbox {
   width: 1.5rem;
@@ -497,7 +516,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #FFFFFF;
+  color: #ffffff;
   transition: all 150ms ease;
   flex-shrink: 0;
 }
@@ -586,21 +605,35 @@ footer {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
-  .plan-grid { grid-template-columns: 1fr; }
+  .plan-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 720px) {
-  html { font-size: 14px; }
+  html {
+    font-size: 14px;
+  }
 
-  .container { padding: 1rem; }
+  .container {
+    padding: 1rem;
+  }
 
-  header { padding: 0.6rem 1rem; }
+  header {
+    padding: 0.6rem 1rem;
+  }
 
   .header-content {
     gap: 0.75rem;
@@ -618,14 +651,19 @@ footer {
     gap: 0.5rem;
   }
 
-  .btn { padding: 0.45rem 0.75rem; }
+  .btn {
+    padding: 0.45rem 0.75rem;
+  }
 
   .nav-tabs {
     margin: 0 -1rem 1rem;
     padding: 0 1rem;
   }
 
-  .nav-tab { padding: 0.7rem 0.85rem; font-size: 0.95rem; }
+  .nav-tab {
+    padding: 0.7rem 0.85rem;
+    font-size: 0.95rem;
+  }
 
   .day-selector {
     display: flex;
@@ -637,21 +675,38 @@ footer {
     scrollbar-width: none;
   }
 
-  .day-selector::-webkit-scrollbar { display: none; }
+  .day-selector::-webkit-scrollbar {
+    display: none;
+  }
 
-  .day-btn { flex: 0 0 4.75rem; padding: 0.65rem 0.45rem; }
-  .day-btn .day-short { font-size: 1rem; }
-  .day-btn .day-full { font-size: 0.72rem; }
+  .day-btn {
+    flex: 0 0 4.75rem;
+    padding: 0.65rem 0.45rem;
+  }
+  .day-btn .day-short {
+    font-size: 1rem;
+  }
+  .day-btn .day-full {
+    font-size: 0.72rem;
+  }
 
-  .g-card, .tip-card {
+  .g-card,
+  .tip-card {
     border-radius: 10px;
     padding: 1rem;
     margin-bottom: 1rem;
   }
 
-  .day-summary-card { align-items: stretch; }
-  .day-title-area, .day-stats-area { width: 100%; }
-  .day-title-area h2 { font-size: 1.15rem; }
+  .day-summary-card {
+    align-items: stretch;
+  }
+  .day-title-area,
+  .day-stats-area {
+    width: 100%;
+  }
+  .day-title-area h2 {
+    font-size: 1.15rem;
+  }
 
   .day-stats-area {
     display: grid;
@@ -659,44 +714,101 @@ footer {
     gap: 0.75rem;
   }
 
-  .stat-badge { justify-content: center; padding: 0.5rem; border-radius: 12px; }
-  .column-title { font-size: 1.1rem; margin-bottom: 0.75rem; }
-  .meal-card, .exercise-card, .rule-item { padding: 0.85rem; }
-  .meal-header { align-items: flex-start; }
-  .meal-cal { white-space: nowrap; }
+  .stat-badge {
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 12px;
+  }
+  .column-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+  }
+  .meal-card,
+  .exercise-card,
+  .rule-item {
+    padding: 0.85rem;
+  }
+  .meal-header {
+    align-items: flex-start;
+  }
+  .meal-cal {
+    white-space: nowrap;
+  }
 
-  .workout-meta { display: grid; grid-template-columns: 1fr; }
-  .workout-badge { justify-content: center; }
+  .workout-meta {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .workout-badge {
+    justify-content: center;
+  }
 
-  .exercise-card { align-items: flex-start; gap: 0.75rem; }
-  .exercise-emoji { width: 2.25rem; height: 2.25rem; font-size: 1.25rem; flex-shrink: 0; }
-  .exercise-sets { margin-top: 0.1rem; }
+  .exercise-card {
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .exercise-emoji {
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+  .exercise-sets {
+    margin-top: 0.1rem;
+  }
 
-  .rules-list { gap: 0.75rem; }
-  .rule-checkbox { flex: 0 0 1.5rem; }
-  .rule-text { font-size: 0.98rem; }
+  .rules-list {
+    gap: 0.75rem;
+  }
+  .rule-checkbox {
+    flex: 0 0 1.5rem;
+  }
+  .rule-text {
+    font-size: 0.98rem;
+  }
 
-  .tips-grid { grid-template-columns: 1fr; gap: 1rem; }
+  .tips-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
 }
 
 @media (max-width: 420px) {
-  .container { padding: 0.75rem; }
+  .container {
+    padding: 0.75rem;
+  }
 
-  header { padding: 0.5rem 0.75rem; }
+  header {
+    padding: 0.5rem 0.75rem;
+  }
 
-  .brand h1 { font-size: 1.0rem; }
+  .brand h1 {
+    font-size: 1rem;
+  }
 
-  .nav-tabs, .day-selector {
+  .nav-tabs,
+  .day-selector {
     margin-left: -0.75rem;
     margin-right: -0.75rem;
     padding-left: 0.75rem;
     padding-right: 0.75rem;
   }
 
-  .day-stats-area { grid-template-columns: 1fr; }
-  .stat-badge { justify-content: space-between; }
+  .day-stats-area {
+    grid-template-columns: 1fr;
+  }
+  .stat-badge {
+    justify-content: space-between;
+  }
 
-  .meal-header, .exercise-card { flex-direction: column; }
-  .exercise-sets { align-self: flex-start; }
-  .tip-header { align-items: flex-start; }
+  .meal-header,
+  .exercise-card {
+    flex-direction: column;
+  }
+  .exercise-sets {
+    align-self: flex-start;
+  }
+  .tip-header {
+    align-items: flex-start;
+  }
 }

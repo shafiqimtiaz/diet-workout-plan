@@ -1,22 +1,23 @@
-import { useState, useCallback } from 'react';
-import { useGeminiPlan } from './hooks/useGeminiPlan';
-import type { SupportedLanguage } from './types/plan';
-import Header from './components/Header';
-import TabNav from './components/TabNav';
-import DailyPlan from './components/DailyPlan';
-import RulesList from './components/RulesList';
-import TipsGrid from './components/TipsGrid';
-import './index.css';
+import { useState, useCallback } from "react";
+import { useGeminiPlan } from "./hooks/useGeminiPlan";
+import type { SupportedLanguage } from "./types/plan";
+import Header from "./components/Header";
+import TabNav from "./components/TabNav";
+import DailyPlan from "./components/DailyPlan";
+import RulesList from "./components/RulesList";
+import TipsGrid from "./components/TipsGrid";
+import "./index.css";
 
 export default function App() {
-  const [lang, setLang] = useState<SupportedLanguage>('en');
-  const [activeTab, setActiveTab] = useState('daily');
+  const [lang, setLang] = useState<SupportedLanguage>("en");
+  const [activeTab, setActiveTab] = useState("daily");
   const [activeDay, setActiveDay] = useState(new Date().getDay());
 
-  const { calories, setCalories, plan, loading, error, usingFallback } = useGeminiPlan();
+  const { calories, setCalories, plan, loading, error, usingFallback } =
+    useGeminiPlan();
 
   const toggleLang = useCallback(() => {
-    setLang((prev) => (prev === 'en' ? 'bn' : 'en'));
+    setLang((prev) => (prev === "en" ? "bn" : "en"));
   }, []);
 
   const day = plan.days[activeDay] ?? plan.days[0];
@@ -40,7 +41,7 @@ export default function App() {
           </div>
         )}
 
-        {activeTab === 'daily' && day && (
+        {activeTab === "daily" && day && (
           <DailyPlan
             lang={lang}
             activeDay={activeDay}
@@ -49,13 +50,13 @@ export default function App() {
           />
         )}
 
-        {activeTab === 'rules' && (
+        {activeTab === "rules" && (
           <div id="view-rules" className="tab-view fade-in">
             <RulesList lang={lang} />
           </div>
         )}
 
-        {activeTab === 'tips' && (
+        {activeTab === "tips" && (
           <div id="view-tips" className="tab-view fade-in">
             <TipsGrid lang={lang} />
           </div>
@@ -65,9 +66,9 @@ export default function App() {
       <footer>
         <div className="container">
           <p>
-            {lang === 'en'
-              ? 'Personal health companion. Honoring healthy lifestyle guidelines daily.'
-              : 'ব্যক্তিগত স্বাস্থ্য সহচর। প্রতিদিন স্বাস্থ্যকর জীবনধারা নির্দেশিকা সম্মানিত করা।'}
+            {lang === "en"
+              ? "Personal health companion. Honoring healthy lifestyle guidelines daily."
+              : "ব্যক্তিগত স্বাস্থ্য সহচর। প্রতিদিন স্বাস্থ্যকর জীবনধারা নির্দেশিকা সম্মানিত করা।"}
           </p>
         </div>
       </footer>

@@ -1,4 +1,4 @@
-import type { SupportedLanguage, Exercise } from '../types/plan';
+import type { SupportedLanguage, Exercise } from "../types/plan";
 
 interface ExerciseCardProps {
   lang: SupportedLanguage;
@@ -12,16 +12,14 @@ export default function ExerciseCard({ lang, exercise }: ExerciseCardProps) {
         <div className="exercise-emoji">{exercise.emoji}</div>
         <div>
           <div className="exercise-name">
-            {lang === 'en' ? exercise.name.en : exercise.name.bn}
+            {lang === "en" ? exercise.name.en : exercise.name.bn}
           </div>
           <div className="exercise-detail">
-            {lang === 'en' ? exercise.detail.en : exercise.detail.bn}
+            {lang === "en" ? exercise.detail.en : exercise.detail.bn}
           </div>
         </div>
       </div>
-      {exercise.sets && (
-        <div className="exercise-sets">{exercise.sets}</div>
-      )}
+      {exercise.sets && <div className="exercise-sets">{exercise.sets}</div>}
     </div>
   );
 }

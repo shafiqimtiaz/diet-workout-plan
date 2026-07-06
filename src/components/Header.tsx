@@ -1,4 +1,4 @@
-import type { SupportedLanguage } from '../types/plan';
+import type { SupportedLanguage } from "../types/plan";
 
 interface HeaderProps {
   lang: SupportedLanguage;
@@ -8,17 +8,27 @@ interface HeaderProps {
   loading: boolean;
 }
 
-export default function Header({ lang, onToggleLang, calories, onCaloriesChange, loading }: HeaderProps) {
+export default function Header({
+  lang,
+  onToggleLang,
+  calories,
+  onCaloriesChange,
+  loading,
+}: HeaderProps) {
   return (
     <header>
       <div className="header-content">
         <div className="brand">
-          <h1>{lang === 'en' ? 'Diet & Workout Plan' : 'ডায়েট ও ওয়ার্কআউট প্ল্যান'}</h1>
+          <h1>
+            {lang === "en"
+              ? "Diet & Workout Plan"
+              : "ডায়েট ও ওয়ার্কআউট প্ল্যান"}
+          </h1>
         </div>
         <div className="controls">
           <div className="calorie-input">
             <label htmlFor="calorie-target">
-              {lang === 'en' ? 'Target cal:' : 'লক্ষ্য ক্যালোরি:'}
+              {lang === "en" ? "Target cal:" : "লক্ষ্য ক্যালোরি:"}
             </label>
             <input
               id="calorie-target"
@@ -33,7 +43,7 @@ export default function Header({ lang, onToggleLang, calories, onCaloriesChange,
             {loading && <span className="spinner" />}
           </div>
           <button className="btn btn-lang" onClick={onToggleLang}>
-            {lang === 'en' ? 'বাংলা' : 'English'}
+            {lang === "en" ? "বাংলা" : "English"}
           </button>
         </div>
       </div>
