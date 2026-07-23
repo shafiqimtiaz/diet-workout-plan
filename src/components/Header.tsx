@@ -1,5 +1,6 @@
-import { Box, chakra, Flex, Heading, Input, Spinner } from "@chakra-ui/react";
+import { Box, chakra, Flex, Heading, Spinner } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import NumberInput from "./NumberInput";
 
 interface HeaderProps {
   calories: number;
@@ -93,19 +94,13 @@ export default function Header({
             >
               Target cal:
             </chakra.label>
-            <Input
+            <NumberInput
               id="calorie-target"
-              type="text"
-              inputMode="numeric"
               value={calories}
-              onChange={(e) => {
-                const raw = e.target.value.replace(/[^0-9]/g, "");
-                if (raw === "") return;
-                onCaloriesChange(Math.max(min, Math.min(max, Number(raw))));
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") onGenerate();
-              }}
+              onChange={onCaloriesChange}
+              min={min}
+              max={max}
+              onKeyDown={(e: any) => { if (e.key === "Enter") onGenerate(); }}
               disabled={loading}
               w="80px"
               px="0.5rem"

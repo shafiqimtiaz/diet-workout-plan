@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { Box, Flex, Input, NativeSelect, Text } from "@chakra-ui/react";
+import NumberInput from "./NumberInput";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { UserIcon } from "@hugeicons/core-free-icons";
 import {
@@ -164,29 +165,21 @@ export default function ProfileBar({
         <Flex as="label" direction="column" gap="0.25rem">
           <FieldLabel>Height</FieldLabel>
           <Flex as="span" display="inline-flex" align="center" gap="0.3rem">
-            <Input
-              type="text"
-              inputMode="numeric"
+            <NumberInput
               value={draft.heightFt}
-              onChange={(e) => {
-                const raw = e.target.value.replace(/[^0-9]/g, "");
-                if (raw === "") return;
-                setDraft({ ...draft, heightFt: Math.max(3, Math.min(8, Number(raw))) });
-              }}
+              onChange={(v) => setDraft({ ...draft, heightFt: v })}
+              min={3}
+              max={8}
               {...numberInputProps}
             />
             <Text as="em" {...emStyle}>
               ft
             </Text>
-            <Input
-              type="text"
-              inputMode="numeric"
+            <NumberInput
               value={draft.heightIn}
-              onChange={(e) => {
-                const raw = e.target.value.replace(/[^0-9]/g, "");
-                if (raw === "") return;
-                setDraft({ ...draft, heightIn: Math.max(0, Math.min(11, Number(raw))) });
-              }}
+              onChange={(v) => setDraft({ ...draft, heightIn: v })}
+              min={0}
+              max={11}
               {...numberInputProps}
             />
             <Text as="em" {...emStyle}>
@@ -198,15 +191,11 @@ export default function ProfileBar({
         <Flex as="label" direction="column" gap="0.25rem">
           <FieldLabel>Weight</FieldLabel>
           <Flex as="span" display="inline-flex" align="center" gap="0.3rem">
-            <Input
-              type="text"
-              inputMode="numeric"
+            <NumberInput
               value={draft.weightKg}
-              onChange={(e) => {
-                const raw = e.target.value.replace(/[^0-9]/g, "");
-                if (raw === "") return;
-                setDraft({ ...draft, weightKg: Math.max(30, Math.min(250, Number(raw))) });
-              }}
+              onChange={(v) => setDraft({ ...draft, weightKg: v })}
+              min={30}
+              max={250}
               {...numberInputProps}
             />
             <Text as="em" {...emStyle}>
@@ -217,15 +206,11 @@ export default function ProfileBar({
 
         <Flex as="label" direction="column" gap="0.25rem">
           <FieldLabel>Age</FieldLabel>
-            <Input
-              type="text"
-              inputMode="numeric"
+            <NumberInput
               value={draft.age}
-              onChange={(e) => {
-                const raw = e.target.value.replace(/[^0-9]/g, "");
-                if (raw === "") return;
-                setDraft({ ...draft, age: Math.max(13, Math.min(100, Number(raw))) });
-              }}
+              onChange={(v) => setDraft({ ...draft, age: v })}
+              min={13}
+              max={100}
               {...numberInputProps}
             />
         </Flex>
