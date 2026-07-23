@@ -8,8 +8,26 @@ interface PlanCache {
   [calories: number]: WeeklyPlan;
 }
 
+const CALORIES_KEY = "target-calories";
+const DEFAULT_CALORIES = 1600;
+
+function clampCalories(n: number): number {
+  return Math.max(1200, Math.min(4000, n));
+}
+
+function initialCalories(): number {
+  try {
+    const stored = Number(localStorage.getItem(CALORIES_KEY));
+    return Number.isFinite(stored) && stored > 0
+      ? clampCalories(stored)
+      : DEFAULT_CALORIES;
+  } catch {
+    return DEFAULT_CALORIES;
+  }
+}
+
 export function useGeminiPlan() {
-  const [calories, setCaloriesState] = useState(1600);
+  const [calories, setCaloriesState] = useState(initialCalories);
   const [plan, setPlan] = useState<WeeklyPlan>(STATIC_PLAN);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,8 +89,13 @@ export function useGeminiPlan() {
 
   const setCalories = useCallback(
     (newCalories: number) => {
-      const clamped = Math.max(1200, Math.min(4000, newCalories));
+      const clamped = clampCalories(newCalories);
       setCaloriesState(clamped);
+      try {
+        localStorage.setItem(CALORIES_KEY, String(clamped));
+      } catch {
+        // ignore — localStorage unavailable (private mode etc.)
+      }
       fetchPlan(clamped);
     },
     [fetchPlan],
