@@ -1,13 +1,12 @@
 import type { ReactNode } from "react";
 import { Box, Flex, Heading, SimpleGrid } from "@chakra-ui/react";
-import type { SupportedLanguage, DayPlan } from "../types/plan";
+import type { DayPlan } from "../types/plan";
 import DaySelector from "./DaySelector";
 import DaySummary from "./DaySummary";
 import MealCard from "./MealCard";
 import ExerciseCard from "./ExerciseCard";
 
 interface DailyPlanProps {
-  lang: SupportedLanguage;
   activeDay: number;
   onDayChange: (day: number) => void;
   day: DayPlan;
@@ -38,32 +37,27 @@ function ColumnTitle({
 }
 
 export default function DailyPlan({
-  lang,
   activeDay,
   onDayChange,
   day,
 }: DailyPlanProps) {
   return (
     <Box>
-      <DaySelector lang={lang} activeDay={activeDay} onDayChange={onDayChange} />
-      <DaySummary lang={lang} dayIndex={activeDay} day={day} />
+      <DaySelector activeDay={activeDay} onDayChange={onDayChange} />
+      <DaySummary dayIndex={activeDay} day={day} />
 
       <SimpleGrid columns={{ base: 1, lg: 2 }} gap="1.5rem">
         {/* Diet Column */}
         <Box>
-          <ColumnTitle icon="🥗">
-            {lang === "en" ? "Diet Plan" : "ডায়েট প্ল্যান"}
-          </ColumnTitle>
+          <ColumnTitle icon="🥗">Diet Plan</ColumnTitle>
           {day.diet.meals.map((meal, i) => (
-            <MealCard key={i} lang={lang} meal={meal} index={i} />
+            <MealCard key={i} meal={meal} index={i} />
           ))}
         </Box>
 
         {/* Workout Column */}
         <Box>
-          <ColumnTitle icon="💪">
-            {lang === "en" ? "Workout Routine" : "ওয়ার্কআউট রুটিন"}
-          </ColumnTitle>
+          <ColumnTitle icon="💪">Workout Routine</ColumnTitle>
 
           <Flex justify="space-between" wrap="wrap" gap="0.75rem" mb="1rem">
             <Flex
@@ -77,10 +71,7 @@ export default function DailyPlan({
               bg="bg"
               color="text"
             >
-              🕐{" "}
-              {lang === "en"
-                ? day.workout.duration.en
-                : day.workout.duration.bn}
+              🕐 {day.workout.duration}
             </Flex>
             <Flex
               align="center"
@@ -93,7 +84,7 @@ export default function DailyPlan({
               bg={{ _light: "#EFF6FF", _dark: "#1e3a5f" }}
               color={{ _light: "#1D4ED8", _dark: "#93c5fd" }}
             >
-              🎯 {lang === "en" ? day.workout.focus.en : day.workout.focus.bn}
+              🎯 {day.workout.focus}
             </Flex>
           </Flex>
 
@@ -109,13 +100,13 @@ export default function DailyPlan({
             color={{ _light: "#1e40af", _dark: "#93c5fd" }}
           >
             <Box fontWeight={700} mb="0.25rem">
-              {lang === "en" ? "🧠 Coach Tip" : "🧠 কোচের পরামর্শ"}
+              🧠 Coach Tip
             </Box>
-            {lang === "en" ? day.workout.tip.en : day.workout.tip.bn}
+            {day.workout.tip}
           </Box>
 
           {day.workout.exercises.map((ex, i) => (
-            <ExerciseCard key={i} lang={lang} exercise={ex} />
+            <ExerciseCard key={i} exercise={ex} />
           ))}
         </Box>
       </SimpleGrid>

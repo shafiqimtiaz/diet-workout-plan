@@ -1,10 +1,7 @@
 import { Box, chakra, Flex, Heading, Input, Spinner } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import type { SupportedLanguage } from "../types/plan";
 
 interface HeaderProps {
-  lang: SupportedLanguage;
-  onToggleLang: () => void;
   calories: number;
   onCaloriesChange: (c: number) => void;
   onGenerate: () => void;
@@ -15,8 +12,6 @@ interface HeaderProps {
 }
 
 export default function Header({
-  lang,
-  onToggleLang,
   calories,
   onCaloriesChange,
   onGenerate,
@@ -79,9 +74,7 @@ export default function Header({
               alignItems="center"
               gap="0.5rem"
             >
-              {lang === "en"
-                ? "Diet & Workout Plan"
-                : "ডায়েট ও ওয়ার্কআউট প্ল্যান"}
+              Diet & Workout Plan
             </Heading>
           </Box>
           <Flex
@@ -98,7 +91,7 @@ export default function Header({
               color="text2"
               whiteSpace="nowrap"
             >
-              {lang === "en" ? "Target cal:" : "লক্ষ্য ক্যালোরি:"}
+              Target cal:
             </chakra.label>
             <Input
               id="calorie-target"
@@ -138,16 +131,8 @@ export default function Header({
           <chakra.button
             onClick={onGenerate}
             disabled={loading}
-            title={
-              dirty
-                ? lang === "en"
-                  ? "Plan is out of date — regenerate"
-                  : "প্ল্যান পুরনো — পুনরায় তৈরি করুন"
-                : lang === "en"
-                  ? "Generate plan"
-                  : "প্ল্যান তৈরি করুন"
-            }
-            aria-label={lang === "en" ? "Generate plan" : "প্ল্যান তৈরি করুন"}
+            title={dirty ? "Plan is out of date — regenerate" : "Generate plan"}
+            aria-label="Generate plan"
             display="inline-flex"
             alignItems="center"
             justifyContent="center"
@@ -181,28 +166,6 @@ export default function Header({
               <polyline points="21 3 21 9 15 9" />
             </svg>
           </chakra.button>
-          <Box
-            as="button"
-            onClick={onToggleLang}
-            display="inline-flex"
-            alignItems="center"
-            gap="0.5rem"
-            px="1rem"
-            py="0.5rem"
-            borderRadius="8px"
-            borderWidth="1px"
-            borderColor="primary"
-            color="primary"
-            bg="surface"
-            fontFamily="body"
-            fontSize="0.9rem"
-            fontWeight={600}
-            cursor="pointer"
-            transition="all 150ms ease"
-            _hover={{ bg: { _light: "#eff6ff", _dark: "#1e3a5f" } }}
-          >
-            {lang === "en" ? "বাংলা" : "English"}
-          </Box>
           <Box
             as="button"
             onClick={toggleDark}

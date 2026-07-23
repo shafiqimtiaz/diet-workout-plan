@@ -1,12 +1,11 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
-import type { SupportedLanguage, Exercise } from "../types/plan";
+import type { Exercise } from "../types/plan";
 
 interface ExerciseCardProps {
-  lang: SupportedLanguage;
   exercise: Exercise;
 }
 
-export default function ExerciseCard({ lang, exercise }: ExerciseCardProps) {
+export default function ExerciseCard({ exercise }: ExerciseCardProps) {
   return (
     <Flex
       bg="surface"
@@ -41,14 +40,14 @@ export default function ExerciseCard({ lang, exercise }: ExerciseCardProps) {
             fontSize="1rem"
             css={{ overflowWrap: "anywhere" }}
           >
-            {lang === "en" ? exercise.name.en : exercise.name.bn}
+            {exercise.name}
           </Box>
           <Text
             fontSize="0.85rem"
             color="text2"
             css={{ overflowWrap: "anywhere" }}
           >
-            {lang === "en" ? exercise.detail.en : exercise.detail.bn}
+            {exercise.detail}
           </Text>
         </Box>
       </Flex>

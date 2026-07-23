@@ -1,17 +1,11 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useGeminiPlan } from "./hooks/useGeminiPlan";
-import type { SupportedLanguage } from "./types/plan";
 import Header from "./components/Header";
 import ProfileBar from "./components/ProfileBar";
-import TabNav from "./components/TabNav";
 import DailyPlan from "./components/DailyPlan";
-import RulesList from "./components/RulesList";
-import TipsGrid from "./components/TipsGrid";
 
 export default function App() {
-  const [lang, setLang] = useState<SupportedLanguage>("en");
-  const [activeTab, setActiveTab] = useState("daily");
   const [activeDay, setActiveDay] = useState(new Date().getDay());
 
   const {
@@ -28,17 +22,11 @@ export default function App() {
     usingFallback,
   } = useGeminiPlan();
 
-  const toggleLang = useCallback(() => {
-    setLang((prev) => (prev === "en" ? "bn" : "en"));
-  }, []);
-
   const day = plan.days[activeDay] ?? plan.days[0];
 
   return (
     <Flex direction="column" minH="100vh">
       <Header
-        lang={lang}
-        onToggleLang={toggleLang}
         calories={calories}
         onCaloriesChange={setCalories}
         onGenerate={generate}
@@ -48,11 +36,9 @@ export default function App() {
         loading={loading}
       />
 
-      <ProfileBar lang={lang} profile={profile} onLockIn={setProfile} />
+      <ProfileBar profile={profile} onLockIn={setProfile} />
 
       <Box as="main" w="100%" maxW="1200px" mx="auto" p={{ base: "1rem", md: "1.5rem" }}>
-        <TabNav lang={lang} activeTab={activeTab} onTabChange={setActiveTab} />
-
         {usingFallback && error && (
           <Flex
             align="center"
@@ -71,26 +57,13 @@ export default function App() {
           </Flex>
         )}
 
-        {activeTab === "daily" && day && (
+        {day && (
           <Box animation="fade-in 200ms ease-out">
             <DailyPlan
-              lang={lang}
               activeDay={activeDay}
               onDayChange={setActiveDay}
               day={day}
             />
-          </Box>
-        )}
-
-        {activeTab === "rules" && (
-          <Box animation="fade-in 200ms ease-out">
-            <RulesList lang={lang} />
-          </Box>
-        )}
-
-        {activeTab === "tips" && (
-          <Box animation="fade-in 200ms ease-out">
-            <TipsGrid lang={lang} />
           </Box>
         )}
       </Box>
@@ -107,9 +80,7 @@ export default function App() {
       >
         <Box w="100%" maxW="1200px" mx="auto" px="1.5rem">
           <Text>
-            {lang === "en"
-              ? "Personal health companion. Honoring healthy lifestyle guidelines daily."
-              : "ব্যক্তিগত স্বাস্থ্য সহচর। প্রতিদিন স্বাস্থ্যকর জীবনধারা নির্দেশিকা সম্মানিত করা।"}
+            Personal health companion. Honoring healthy lifestyle guidelines daily.
           </Text>
         </Box>
       </Box>

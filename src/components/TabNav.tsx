@@ -1,19 +1,17 @@
 import { Box, Flex } from "@chakra-ui/react";
-import type { SupportedLanguage } from "../types/plan";
 
 interface TabNavProps {
-  lang: SupportedLanguage;
   activeTab: string;
   onTabChange: (tab: string) => void;
 }
 
 const TABS = [
-  { id: "daily", en: "Daily Plan", bn: "দৈনিক প্ল্যান" },
-  { id: "rules", en: "Weekly Rules", bn: "সাপ্তাহিক নিয়ম" },
-  { id: "tips", en: "Health Tips", bn: "স্বাস্থ্য টিপস" },
+  { id: "daily", label: "Daily Plan" },
+  { id: "rules", label: "Weekly Rules" },
+  { id: "tips", label: "Health Tips" },
 ];
 
-export default function TabNav({ lang, activeTab, onTabChange }: TabNavProps) {
+export default function TabNav({ activeTab, onTabChange }: TabNavProps) {
   return (
     <Flex
       gap="0.5rem"
@@ -45,7 +43,7 @@ export default function TabNav({ lang, activeTab, onTabChange }: TabNavProps) {
             whiteSpace="nowrap"
             _hover={active ? undefined : { color: "text" }}
           >
-            {lang === "en" ? tab.en : tab.bn}
+            {tab.label}
           </Box>
         );
       })}

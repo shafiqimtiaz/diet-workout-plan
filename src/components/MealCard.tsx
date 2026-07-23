@@ -1,8 +1,7 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
-import type { SupportedLanguage, Meal } from "../types/plan";
+import type { Meal } from "../types/plan";
 
 interface MealCardProps {
-  lang: SupportedLanguage;
   meal: Meal;
   index: number;
 }
@@ -14,7 +13,7 @@ const ACCENT_STYLES = [
   { bg: "#F5F3FF", fg: "#6D28D9" },
 ];
 
-export default function MealCard({ lang, meal, index }: MealCardProps) {
+export default function MealCard({ meal, index }: MealCardProps) {
   const accent = ACCENT_STYLES[index % ACCENT_STYLES.length];
 
   return (
@@ -41,7 +40,7 @@ export default function MealCard({ lang, meal, index }: MealCardProps) {
       >
         <Flex align="center" gap="0.5rem" fontWeight={700}>
           <span>{meal.icon}</span>
-          <span>{lang === "en" ? meal.time.en : meal.time.bn}</span>
+          <span>{meal.time}</span>
         </Flex>
         <Box
           fontFamily="mono"
@@ -58,7 +57,7 @@ export default function MealCard({ lang, meal, index }: MealCardProps) {
         </Box>
       </Flex>
       <Text fontSize="0.85rem" color="text2" mb="0.5rem">
-        {lang === "en" ? meal.detail.en : meal.detail.bn}
+        {meal.detail}
       </Text>
       <Box as="ul" listStyleType="none" pl={0}>
         {meal.items.map((item, i) => (
@@ -74,7 +73,7 @@ export default function MealCard({ lang, meal, index }: MealCardProps) {
             <Box as="span" color="primary" fontWeight="bold">
               •
             </Box>
-            <span>{lang === "en" ? item.en : item.bn}</span>
+            <span>{item}</span>
           </Flex>
         ))}
       </Box>

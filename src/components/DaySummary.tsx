@@ -1,9 +1,8 @@
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
-import type { SupportedLanguage, DayPlan } from "../types/plan";
+import type { DayPlan } from "../types/plan";
 import { DAY_NAMES } from "../types/plan";
 
 interface DaySummaryProps {
-  lang: SupportedLanguage;
   dayIndex: number;
   day: DayPlan;
 }
@@ -31,9 +30,8 @@ function StatBadge({ label, value }: { label: string; value: string }) {
   );
 }
 
-export default function DaySummary({ lang, dayIndex, day }: DaySummaryProps) {
+export default function DaySummary({ dayIndex, day }: DaySummaryProps) {
   const d = DAY_NAMES[dayIndex];
-  const name = lang === "en" ? d.fullEn : d.fullBn;
 
   return (
     <Flex
@@ -52,23 +50,17 @@ export default function DaySummary({ lang, dayIndex, day }: DaySummaryProps) {
     >
       <Box>
         <Heading as="h2" fontFamily="heading" fontSize="1.5rem" fontWeight={700}>
-          {name}
+          {d.full}
         </Heading>
         <Text color="text2" mt="0.25rem">
-          {lang === "en" ? day.workout.type.en : day.workout.type.bn}
+          {day.workout.type}
           {" · "}
-          {lang === "en" ? day.workout.duration.en : day.workout.duration.bn}
+          {day.workout.duration}
         </Text>
       </Box>
       <Flex gap="1.5rem">
-        <StatBadge
-          label={lang === "en" ? "Calories" : "ক্যালোরি"}
-          value={String(day.diet.calories)}
-        />
-        <StatBadge
-          label={lang === "en" ? "Protein" : "প্রোটিন"}
-          value={`${day.diet.protein}g`}
-        />
+        <StatBadge label="Calories" value={String(day.diet.calories)} />
+        <StatBadge label="Protein" value={`${day.diet.protein}g`} />
       </Flex>
     </Flex>
   );

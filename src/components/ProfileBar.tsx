@@ -1,6 +1,5 @@
 import { useState, type ReactNode } from "react";
 import { Box, Flex, Input, NativeSelect, Text } from "@chakra-ui/react";
-import type { SupportedLanguage } from "../types/plan";
 import {
   computeCalories,
   type Profile,
@@ -9,17 +8,16 @@ import {
 } from "../services/calories";
 
 interface ProfileBarProps {
-  lang: SupportedLanguage;
   profile: Profile;
   onLockIn: (p: Profile) => void;
 }
 
-const ACTIVITY_OPTIONS: { value: ActivityLevel; en: string; bn: string }[] = [
-  { value: "sedentary", en: "Sedentary", bn: "নিষ্ক্রিয়" },
-  { value: "light", en: "Lightly active", bn: "হালকা সক্রিয়" },
-  { value: "moderate", en: "Moderately active", bn: "মাঝারি সক্রিয়" },
-  { value: "active", en: "Very active", bn: "খুব সক্রিয়" },
-  { value: "extra", en: "Extra active", bn: "অতি সক্রিয়" },
+const ACTIVITY_OPTIONS: { value: ActivityLevel; label: string }[] = [
+  { value: "sedentary", label: "Sedentary" },
+  { value: "light", label: "Lightly active" },
+  { value: "moderate", label: "Moderately active" },
+  { value: "active", label: "Very active" },
+  { value: "extra", label: "Extra active" },
 ];
 
 const fieldInputProps = {
@@ -58,17 +56,15 @@ function FieldLabel({ children }: { children: ReactNode }) {
 }
 
 export default function ProfileBar({
-  lang,
   profile,
   onLockIn,
 }: ProfileBarProps) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState<Profile>(profile);
 
-  const t = (en: string, bn: string) => (lang === "en" ? en : bn);
   const activityLabel = (a: ActivityLevel) => {
     const o = ACTIVITY_OPTIONS.find((x) => x.value === a);
-    return o ? t(o.en, o.bn) : a;
+    return o ? o.label : a;
   };
 
   const startEdit = () => {
@@ -88,7 +84,7 @@ export default function ProfileBar({
   } as const;
 
   if (!editing) {
-    const summary = `${profile.heightFt}'${profile.heightIn}" · ${profile.weightKg}kg · ${profile.age} · ${profile.sex === "male" ? t("M", "পু") : t("F", "মহি")} · ${activityLabel(profile.activity)} · ${profile.location}`;
+    const summary = `${profile.heightFt}'${profile.heightIn}" · ${profile.weightKg}kg · ${profile.age} · ${profile.sex === "male" ? "M" : "F"} · ${activityLabel(profile.activity)} · ${profile.location}`;
     return (
       <Flex
         maxW="1200px"
@@ -133,7 +129,7 @@ export default function ProfileBar({
           whiteSpace="nowrap"
           _hover={{ bg: { _light: "#eff6ff", _dark: "#1e3a5f" } }}
         >
-          {t("Edit", "সম্পাদনা")}
+          Edit
         </Box>
       </Flex>
     );
@@ -158,7 +154,7 @@ export default function ProfileBar({
     >
       <Flex wrap="wrap" gap={{ base: "0.5rem 0.75rem", md: "0.75rem 1.25rem" }} align="flex-end">
         <Flex as="label" direction="column" gap="0.25rem">
-          <FieldLabel>{t("Height", "উচ্চতা")}</FieldLabel>
+          <FieldLabel>Height</FieldLabel>
           <Flex as="span" display="inline-flex" align="center" gap="0.3rem">
             <Input
               type="text"
@@ -192,7 +188,7 @@ export default function ProfileBar({
         </Flex>
 
         <Flex as="label" direction="column" gap="0.25rem">
-          <FieldLabel>{t("Weight", "ওজন")}</FieldLabel>
+          <FieldLabel>Weight</FieldLabel>
           <Flex as="span" display="inline-flex" align="center" gap="0.3rem">
             <Input
               type="text"
@@ -212,7 +208,7 @@ export default function ProfileBar({
         </Flex>
 
         <Flex as="label" direction="column" gap="0.25rem">
-          <FieldLabel>{t("Age", "বয়স")}</FieldLabel>
+          <FieldLabel>Age</FieldLabel>
             <Input
               type="text"
               inputMode="numeric"
@@ -227,7 +223,7 @@ export default function ProfileBar({
         </Flex>
 
         <Flex as="label" direction="column" gap="0.25rem">
-          <FieldLabel>{t("Sex", "লিঙ্গ")}</FieldLabel>
+          <FieldLabel>Sex</FieldLabel>
           <NativeSelect.Root size="sm">
             <NativeSelect.Field
               value={draft.sex}
@@ -236,15 +232,15 @@ export default function ProfileBar({
               }
               {...fieldInputProps}
             >
-              <option value="male">{t("Male", "পুরুষ")}</option>
-              <option value="female">{t("Female", "মহিলা")}</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
             </NativeSelect.Field>
             <NativeSelect.Indicator />
           </NativeSelect.Root>
         </Flex>
 
         <Flex as="label" direction="column" gap="0.25rem">
-          <FieldLabel>{t("Activity", "কার্যকলাপ")}</FieldLabel>
+          <FieldLabel>Activity</FieldLabel>
           <NativeSelect.Root size="sm">
             <NativeSelect.Field
               value={draft.activity}
@@ -258,7 +254,7 @@ export default function ProfileBar({
             >
               {ACTIVITY_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
-                  {t(o.en, o.bn)}
+                  {o.label}
                 </option>
               ))}
             </NativeSelect.Field>
@@ -267,7 +263,7 @@ export default function ProfileBar({
         </Flex>
 
         <Flex as="label" direction="column" gap="0.25rem" flex="1 1 200px">
-          <FieldLabel>{t("Location", "অবস্থান")}</FieldLabel>
+          <FieldLabel>Location</FieldLabel>
           <Input
             type="text"
             value={draft.location}
@@ -280,11 +276,11 @@ export default function ProfileBar({
 
       <Flex align="center" justify="flex-end" gap="1rem" mt="0.75rem">
         <Text fontSize="0.85rem" color="text2">
-          {t("Recommended", "প্রস্তাবিত")}:{" "}
+          Recommended:{" "}
           <Text as="strong" color="primary" fontFamily="mono">
             {recommended}
           </Text>{" "}
-          {t("cal", "ক্যালোরি")}
+          cal
         </Text>
         <Box
           as="button"
@@ -303,7 +299,7 @@ export default function ProfileBar({
           transition="all 150ms ease"
           _hover={{ bg: { _light: "#eff6ff", _dark: "#1e3a5f" } }}
         >
-          {t("Lock in", "লক করুন")}
+          Lock in
         </Box>
       </Flex>
     </Flex>

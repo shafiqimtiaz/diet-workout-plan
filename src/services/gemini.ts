@@ -5,7 +5,6 @@ import type {
   DayWorkout,
   Meal,
   Exercise,
-  Bilingual,
 } from "../types/plan";
 
 const MODEL = "gemini-flash-lite-latest";
@@ -27,39 +26,17 @@ function isRateLimitError(error: unknown): boolean {
   return /429|quota|rate.?limit|exceeded/i.test(msg);
 }
 
-function b(en: string, bn: string): Bilingual {
-  return { en, bn };
-}
-
 function parseWorkout(obj: Record<string, unknown>): DayWorkout {
   return {
-    type: b(
-      String(obj.type_en ?? obj.type ?? ""),
-      String(obj.type_bn ?? obj.type ?? ""),
-    ),
-    duration: b(
-      String(obj.duration_en ?? obj.duration ?? ""),
-      String(obj.duration_bn ?? obj.duration ?? ""),
-    ),
-    focus: b(
-      String(obj.focus_en ?? obj.focus ?? ""),
-      String(obj.focus_bn ?? obj.focus ?? ""),
-    ),
-    tip: b(
-      String(obj.tip_en ?? obj.tip ?? ""),
-      String(obj.tip_bn ?? obj.tip ?? ""),
-    ),
+    type: String(obj.type ?? ""),
+    duration: String(obj.duration ?? ""),
+    focus: String(obj.focus ?? ""),
+    tip: String(obj.tip ?? ""),
     exercises: (Array.isArray(obj.exercises) ? obj.exercises : []).map(
       (ex: Record<string, unknown>) =>
         ({
-          name: b(
-            String(ex.name_en ?? ex.name ?? ""),
-            String(ex.name_bn ?? ex.name ?? ""),
-          ),
-          detail: b(
-            String(ex.detail_en ?? ex.detail ?? ""),
-            String(ex.detail_bn ?? ex.detail ?? ""),
-          ),
+          name: String(ex.name ?? ""),
+          detail: String(ex.detail ?? ""),
           sets: ex.sets ? String(ex.sets) : null,
           emoji: String(ex.emoji ?? "🏋️"),
         }) as Exercise,
@@ -79,25 +56,15 @@ function parseDay(obj: Record<string, unknown>): DayPlan {
       calories: Number(dietObj.calories ?? 1600),
       protein: Number(dietObj.protein ?? 100),
       meals: meals.map((m): Meal => ({
-        time: b(
-          String(m.time_en ?? m.time ?? ""),
-          String(m.time_bn ?? m.time ?? ""),
-        ),
-        detail: b(
-          String(m.detail_en ?? m.detail ?? ""),
-          String(m.detail_bn ?? m.detail ?? ""),
-        ),
+        time: String(m.time ?? ""),
+        detail: String(m.detail ?? ""),
         icon: String(m.icon ?? "🍽️"),
         cal: Number(m.cal ?? 400),
         items: (Array.isArray(m.items) ? m.items : []).map((item: unknown) => {
           if (typeof item === "object" && item !== null) {
-            const i = item as Record<string, unknown>;
-            return b(
-              String(i.en ?? i.item ?? ""),
-              String(i.bn ?? i.item ?? ""),
-            );
+            return String((item as Record<string, unknown>).en ?? (item as Record<string, unknown>).item ?? "");
           }
-          return b(String(item), String(item));
+          return String(item);
         }),
       })),
     },
@@ -106,8 +73,7 @@ function parseDay(obj: Record<string, unknown>): DayPlan {
 }
 
 // Fixed weekly workout schedule (index 0 = Sunday). The plan is generated in
-// chunks because the model caps output at 8192 tokens — a full bilingual
-// 7-day plan does not fit in a single response.
+// chunks because the model caps output at 8192 tokens.
 const WEEKLY_SCHEDULE = [
   "Active Rest · Mobility (Sunday) — gentle recovery, light outdoor walk",
   "Strength · Push (Monday) — home gym: dumbbells, barbell, bench",
@@ -139,8 +105,6 @@ function buildPrompt(
 Generate EXACTLY ${schedule.length} days, in this order, each with the specified workout focus:
 ${dayList}
 
-IMPORTANT: ALL text MUST be in BOTH English (field_en) AND Bengali/Bangla (field_bn). Every string needs both translations with natural, native-level Bengali.
-
 Return ONLY valid JSON — NO markdown, NO backticks, NO explanation.
 
 {
@@ -151,33 +115,25 @@ Return ONLY valid JSON — NO markdown, NO backticks, NO explanation.
         "protein": number (approximately ${Math.round(targetCalories * 0.075)}g),
         "meals": [
           {
-            "time_en": "Breakfast",
-            "time_bn": "সকাল",
-            "detail_en": "7-8 AM",
-            "detail_bn": "সকাল ৭-৮টা",
+            "time": "Breakfast",
+            "detail": "7-8 AM",
             "icon": "🌅",
             "cal": number,
             "items": [
-              {"en": "2 scrambled eggs with a pinch of black pepper", "bn": "২টি স্ক্র্যাম্বলড ডিম গোল মরিচ দিয়ে"}
+              "2 scrambled eggs with a pinch of black pepper"
             ]
           }
         ]
       },
       "workout": {
-        "type_en": "Strength · Push",
-        "type_bn": "শক্তি · পুশ",
-        "duration_en": "40 min",
-        "duration_bn": "৪০ মিনিট",
-        "focus_en": "Chest · Shoulders · Triceps",
-        "focus_bn": "বুক · কাঁধ · ট্রাইসেপ",
-        "tip_en": "detailed coaching tip — 2 sentences, specific, motivational",
-        "tip_bn": "detailed Bengali coaching tip",
+        "type": "Strength · Push",
+        "duration": "40 min",
+        "focus": "Chest · Shoulders · Triceps",
+        "tip": "detailed coaching tip — 2 sentences, specific, motivational",
         "exercises": [
           {
-            "name_en": "Dumbbell Floor Press",
-            "name_bn": "ডাম্বেল ফ্লোর প্রেস",
-            "detail_en": "4 sets × 8-10 reps, controlled tempo",
-            "detail_bn": "৪ সেট × ৮-১০ বার, নিয়ন্ত্রিত গতিতে",
+            "name": "Dumbbell Floor Press",
+            "detail": "4 sets × 8-10 reps, controlled tempo",
             "sets": "4×8-10",
             "emoji": "🏋️"
           }
@@ -280,7 +236,7 @@ async function runChunk(
           // fall through
         }
 
-          // 3b — handle unescaped control chars in strings (common with Bengali/emojis)
+          // 3b — handle unescaped control chars in strings
           const escCtrl = extracted.replace(/[\u0000-\u001F\u007F]/g, (ch) =>
             ch === "\t" ? "\\t" :
             ch === "\n" ? "\\n" :

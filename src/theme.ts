@@ -19,8 +19,8 @@ const config = defineConfig({
         success: { value: "#10b981" },
       },
       fonts: {
-        body: { value: '"DM Sans", "Noto Sans Bengali", sans-serif' },
-        heading: { value: '"General Sans", "Noto Sans Bengali", sans-serif' },
+        body: { value: '"DM Sans", sans-serif' },
+        heading: { value: '"General Sans", sans-serif' },
         mono: { value: '"JetBrains Mono", monospace' },
       },
     },

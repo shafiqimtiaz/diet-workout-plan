@@ -1,16 +1,9 @@
-export type SupportedLanguage = "en" | "bn";
-
-export interface Bilingual {
-  en: string;
-  bn: string;
-}
-
 export interface Meal {
-  time: Bilingual;
-  detail: Bilingual;
+  time: string;
+  detail: string;
   icon: string;
   cal: number;
-  items: Bilingual[];
+  items: string[];
 }
 
 export interface DayDiet {
@@ -20,17 +13,17 @@ export interface DayDiet {
 }
 
 export interface Exercise {
-  name: Bilingual;
-  detail: Bilingual;
+  name: string;
+  detail: string;
   sets: string | null;
   emoji: string;
 }
 
 export interface DayWorkout {
-  type: Bilingual;
-  duration: Bilingual;
-  focus: Bilingual;
-  tip: Bilingual;
+  type: string;
+  duration: string;
+  focus: string;
+  tip: string;
   exercises: Exercise[];
 }
 
@@ -43,19 +36,12 @@ export interface WeeklyPlan {
   days: DayPlan[];
 }
 
-export interface DayMeta {
-  en: string;
-  bn: string;
-  fullEn: string;
-  fullBn: string;
-}
-
-export const DAY_NAMES: DayMeta[] = [
-  { en: "Sun", bn: "রবি", fullEn: "Sunday", fullBn: "রবিবার" },
-  { en: "Mon", bn: "সোম", fullEn: "Monday", fullBn: "সোমবার" },
-  { en: "Tue", bn: "মঙ্গল", fullEn: "Tuesday", fullBn: "মঙ্গলবার" },
-  { en: "Wed", bn: "বুধ", fullEn: "Wednesday", fullBn: "বুধবার" },
-  { en: "Thu", bn: "বৃহঃ", fullEn: "Thursday", fullBn: "বৃহস্পতিবার" },
-  { en: "Fri", bn: "শুক্র", fullEn: "Friday", fullBn: "শুক্রবার" },
-  { en: "Sat", bn: "শনি", fullEn: "Saturday", fullBn: "শনিবার" },
+export const DAY_NAMES = [
+  { short: "Sun", full: "Sunday" },
+  { short: "Mon", full: "Monday" },
+  { short: "Tue", full: "Tuesday" },
+  { short: "Wed", full: "Wednesday" },
+  { short: "Thu", full: "Thursday" },
+  { short: "Fri", full: "Friday" },
+  { short: "Sat", full: "Saturday" },
 ];

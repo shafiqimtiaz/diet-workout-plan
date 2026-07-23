@@ -1,15 +1,12 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
-import type { SupportedLanguage } from "../types/plan";
 import { DAY_NAMES } from "../types/plan";
 
 interface DaySelectorProps {
-  lang: SupportedLanguage;
   activeDay: number;
   onDayChange: (day: number) => void;
 }
 
 export default function DaySelector({
-  lang,
   activeDay,
   onDayChange,
 }: DaySelectorProps) {
@@ -52,10 +49,10 @@ export default function DaySelector({
               fontSize="1.1rem"
               mb="0.25rem"
             >
-              {lang === "en" ? day.en : day.bn}
+              {day.short}
             </Text>
             <Text as="span" fontSize="0.8rem" opacity={0.8}>
-              {lang === "en" ? day.fullEn : day.fullBn}
+              {day.full}
             </Text>
           </Box>
         );
@@ -63,4 +60,3 @@ export default function DaySelector({
     </Flex>
   );
 }
-
