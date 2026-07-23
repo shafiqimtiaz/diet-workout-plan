@@ -77,7 +77,10 @@ export default function Header({
               max={max}
               step={50}
               value={calories}
-              onChange={(e) => onCaloriesChange(Number(e.target.value))}
+              onChange={(e) => {
+                const v = e.target.valueAsNumber;
+                if (!Number.isNaN(v)) onCaloriesChange(v);
+              }}
               onKeyDown={(e) => {
                 if (e.key === "Enter") onGenerate();
               }}
