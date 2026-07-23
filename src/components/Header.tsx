@@ -102,14 +102,13 @@ export default function Header({
             </chakra.label>
             <Input
               id="calorie-target"
-              type="number"
-              min={min}
-              max={max}
-              step={50}
+              type="text"
+              inputMode="numeric"
               value={calories}
               onChange={(e) => {
-                const v = e.target.valueAsNumber;
-                if (!Number.isNaN(v)) onCaloriesChange(v);
+                const raw = e.target.value.replace(/[^0-9]/g, "");
+                if (raw === "") return;
+                onCaloriesChange(Math.max(min, Math.min(max, Number(raw))));
               }}
               onKeyDown={(e) => {
                 if (e.key === "Enter") onGenerate();
