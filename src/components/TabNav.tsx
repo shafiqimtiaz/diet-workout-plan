@@ -1,3 +1,4 @@
+import { Box, Flex } from "@chakra-ui/react";
 import type { SupportedLanguage } from "../types/plan";
 
 interface TabNavProps {
@@ -14,16 +15,40 @@ const TABS = [
 
 export default function TabNav({ lang, activeTab, onTabChange }: TabNavProps) {
   return (
-    <div className="nav-tabs">
-      {TABS.map((tab) => (
-        <button
-          key={tab.id}
-          className={`nav-tab ${activeTab === tab.id ? "active" : ""}`}
-          onClick={() => onTabChange(tab.id)}
-        >
-          {lang === "en" ? tab.en : tab.bn}
-        </button>
-      ))}
-    </div>
+    <Flex
+      gap="0.5rem"
+      borderBottomWidth="1px"
+      borderColor="border"
+      mb="1.5rem"
+      overflowX="auto"
+      css={{ scrollbarWidth: "none", "&::-webkit-scrollbar": { display: "none" } }}
+    >
+      {TABS.map((tab) => {
+        const active = activeTab === tab.id;
+        return (
+          <Box
+            as="button"
+            key={tab.id}
+            onClick={() => onTabChange(tab.id)}
+            bg="none"
+            border="none"
+            borderBottomWidth="2px"
+            borderBottomColor={active ? "primary" : "transparent"}
+            px="1rem"
+            py="0.75rem"
+            fontFamily="heading"
+            fontWeight={600}
+            fontSize="1rem"
+            color={active ? "primary" : "text2"}
+            cursor="pointer"
+            transition="all 150ms ease"
+            whiteSpace="nowrap"
+            _hover={active ? undefined : { color: "text" }}
+          >
+            {lang === "en" ? tab.en : tab.bn}
+          </Box>
+        );
+      })}
+    </Flex>
   );
 }

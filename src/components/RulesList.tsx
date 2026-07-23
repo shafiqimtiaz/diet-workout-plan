@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import type { SupportedLanguage } from "../types/plan";
 
 interface RulesListProps {
@@ -37,21 +38,62 @@ export default function RulesList({ lang }: RulesListProps) {
   };
 
   return (
-    <div className="g-card">
-      <div className="rules-list">
-        {rules.map((rule, i) => (
-          <div
-            key={i}
-            className={`rule-item ${checked[i] ? "checked" : ""}`}
-            onClick={() => toggle(i)}
-          >
-            <div className={`rule-checkbox ${checked[i] ? "checked" : ""}`}>
-              {checked[i] ? "✓" : ""}
-            </div>
-            <div className="rule-text">{rule}</div>
-          </div>
-        ))}
-      </div>
-    </div>
+    <Box
+      bg="surface"
+      borderWidth="1px"
+      borderColor="border"
+      borderRadius="12px"
+      p="1.5rem"
+      mb="1.5rem"
+      transition="box-shadow 200ms ease"
+      _hover={{ boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
+    >
+      <Flex direction="column" gap="1rem">
+        {rules.map((rule, i) => {
+          const isChecked = checked[i];
+          return (
+            <Flex
+              key={i}
+              onClick={() => toggle(i)}
+              align="center"
+              gap="1rem"
+              bg="surface"
+              borderWidth="1px"
+              borderColor="border"
+              borderRadius="10px"
+              p="1rem"
+              cursor="pointer"
+              transition="all 150ms ease"
+              _hover={{ borderColor: "neutral" }}
+            >
+              <Flex
+                align="center"
+                justify="center"
+                w="1.5rem"
+                h="1.5rem"
+                borderRadius="50%"
+                borderWidth="2px"
+                borderColor={isChecked ? "success" : "neutral"}
+                bg={isChecked ? "success" : "transparent"}
+                color="#ffffff"
+                transition="all 150ms ease"
+                flexShrink={0}
+              >
+                {isChecked ? "✓" : ""}
+              </Flex>
+              <Text
+                fontSize="1.05rem"
+                fontWeight={500}
+                color={isChecked ? "text2" : "text"}
+                textDecoration={isChecked ? "line-through" : "none"}
+                css={{ overflowWrap: "anywhere" }}
+              >
+                {rule}
+              </Text>
+            </Flex>
+          );
+        })}
+      </Flex>
+    </Box>
   );
 }

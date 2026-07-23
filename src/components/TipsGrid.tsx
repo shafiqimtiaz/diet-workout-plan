@@ -1,3 +1,4 @@
+import { Box, Flex, SimpleGrid, Text } from "@chakra-ui/react";
 import type { SupportedLanguage, Bilingual } from "../types/plan";
 
 interface TipsGridProps {
@@ -70,20 +71,54 @@ const TIPS = [
 
 export default function TipsGrid({ lang }: TipsGridProps) {
   return (
-    <div className="tips-grid">
+    <SimpleGrid minChildWidth="300px" gap="1.5rem">
       {TIPS.map((tip, i) => (
-        <div key={i} className="tip-card fade-in">
-          <div className="tip-header">
-            <div className="tip-icon">{tip.emoji}</div>
-            <div className="tip-title">
+        <Box
+          key={i}
+          bg="surface"
+          borderWidth="1px"
+          borderColor="border"
+          borderRadius="12px"
+          p="1.5rem"
+          transition="all 200ms ease"
+          animation="fade-in 200ms ease-out"
+          _hover={{
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+            transform: "translateY(-2px)",
+          }}
+        >
+          <Flex align="center" gap="0.75rem" mb="0.75rem">
+            <Flex
+              align="center"
+              justify="center"
+              fontSize="1.75rem"
+              bg="bg"
+              w="3rem"
+              h="3rem"
+              borderRadius="10px"
+              flexShrink={0}
+            >
+              {tip.emoji}
+            </Flex>
+            <Box
+              fontFamily="heading"
+              fontSize="1.15rem"
+              fontWeight={700}
+              css={{ overflowWrap: "anywhere" }}
+            >
               {lang === "en" ? tip.title.en : tip.title.bn}
-            </div>
-          </div>
-          <div className="tip-body">
+            </Box>
+          </Flex>
+          <Text
+            fontSize="0.95rem"
+            color="text2"
+            lineHeight={1.6}
+            css={{ overflowWrap: "anywhere" }}
+          >
             {lang === "en" ? tip.body.en : tip.body.bn}
-          </div>
-        </div>
+          </Text>
+        </Box>
       ))}
-    </div>
+    </SimpleGrid>
   );
 }

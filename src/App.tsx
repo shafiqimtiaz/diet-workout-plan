@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useGeminiPlan } from "./hooks/useGeminiPlan";
 import type { SupportedLanguage } from "./types/plan";
 import Header from "./components/Header";
@@ -7,7 +8,6 @@ import TabNav from "./components/TabNav";
 import DailyPlan from "./components/DailyPlan";
 import RulesList from "./components/RulesList";
 import TipsGrid from "./components/TipsGrid";
-import "./index.css";
 
 export default function App() {
   const [lang, setLang] = useState<SupportedLanguage>("en");
@@ -35,7 +35,7 @@ export default function App() {
   const day = plan.days[activeDay] ?? plan.days[0];
 
   return (
-    <div className="g-root">
+    <Flex direction="column" minH="100vh">
       <Header
         lang={lang}
         onToggleLang={toggleLang}
@@ -50,46 +50,69 @@ export default function App() {
 
       <ProfileBar lang={lang} profile={profile} onLockIn={setProfile} />
 
-      <main className="container">
+      <Box as="main" w="100%" maxW="1200px" mx="auto" p="1.5rem">
         <TabNav lang={lang} activeTab={activeTab} onTabChange={setActiveTab} />
 
         {usingFallback && error && (
-          <div className="api-banner">
+          <Flex
+            align="center"
+            gap="0.5rem"
+            bg="#fef3c7"
+            borderWidth="1px"
+            borderColor="#f59e0b"
+            color="#92400e"
+            px="1rem"
+            py="0.75rem"
+            borderRadius="8px"
+            mb="1rem"
+            fontSize="0.9rem"
+          >
             <span>⚠️</span> {error}
-          </div>
+          </Flex>
         )}
 
         {activeTab === "daily" && day && (
-          <DailyPlan
-            lang={lang}
-            activeDay={activeDay}
-            onDayChange={setActiveDay}
-            day={day}
-          />
+          <Box animation="fade-in 200ms ease-out">
+            <DailyPlan
+              lang={lang}
+              activeDay={activeDay}
+              onDayChange={setActiveDay}
+              day={day}
+            />
+          </Box>
         )}
 
         {activeTab === "rules" && (
-          <div id="view-rules" className="tab-view fade-in">
+          <Box animation="fade-in 200ms ease-out">
             <RulesList lang={lang} />
-          </div>
+          </Box>
         )}
 
         {activeTab === "tips" && (
-          <div id="view-tips" className="tab-view fade-in">
+          <Box animation="fade-in 200ms ease-out">
             <TipsGrid lang={lang} />
-          </div>
+          </Box>
         )}
-      </main>
+      </Box>
 
-      <footer>
-        <div className="container">
-          <p>
+      <Box
+        as="footer"
+        mt="auto"
+        textAlign="center"
+        py="2rem"
+        color="text2"
+        borderTopWidth="1px"
+        borderColor="border"
+        fontSize="0.9rem"
+      >
+        <Box w="100%" maxW="1200px" mx="auto" px="1.5rem">
+          <Text>
             {lang === "en"
               ? "Personal health companion. Honoring healthy lifestyle guidelines daily."
               : "ব্যক্তিগত স্বাস্থ্য সহচর। প্রতিদিন স্বাস্থ্যকর জীবনধারা নির্দেশিকা সম্মানিত করা।"}
-          </p>
-        </div>
-      </footer>
-    </div>
+          </Text>
+        </Box>
+      </Box>
+    </Flex>
   );
 }
