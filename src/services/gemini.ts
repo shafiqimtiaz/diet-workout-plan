@@ -10,9 +10,7 @@ import type {
 
 // Model fallback chain — tries primary first (most quota headroom), then falls back on 429/rate errors
 const MODEL_CHAIN = [
-  "gemini-2.5-flash-lite",
-  "gemini-3.0-flash",
-  "gemini-3.1-flash-lite",
+  "gemini-3.5-flash-lite",
 ];
 const MAX_RETRIES = 2;
 
@@ -133,7 +131,7 @@ export async function generatePlan(
         const model = genAI.getGenerativeModel({
           model: modelName,
           generationConfig: {
-            maxOutputTokens: 4096,
+            maxOutputTokens: 8192,
             temperature: 0.7,
           },
         });
