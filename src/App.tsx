@@ -31,7 +31,6 @@ export default function App() {
         onCaloriesChange={setCalories}
         onGenerate={generate}
         min={range.min}
-        max={range.max}
         dirty={dirty}
         loading={loading}
       />

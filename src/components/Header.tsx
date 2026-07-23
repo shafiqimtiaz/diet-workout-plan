@@ -1,4 +1,4 @@
-import { Box, chakra, Flex, Heading, Spinner } from "@chakra-ui/react";
+import { Box, chakra, Flex, Heading, Spinner, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import NumberInput from "./NumberInput";
 
@@ -7,7 +7,6 @@ interface HeaderProps {
   onCaloriesChange: (c: number) => void;
   onGenerate: () => void;
   min: number;
-  max: number;
   dirty: boolean;
   loading: boolean;
 }
@@ -17,7 +16,6 @@ export default function Header({
   onCaloriesChange,
   onGenerate,
   min,
-  max,
   dirty,
   loading,
 }: HeaderProps) {
@@ -98,8 +96,8 @@ export default function Header({
               id="calorie-target"
               value={calories}
               onChange={onCaloriesChange}
-              min={min}
-              max={max}
+              min={0}
+              max={9999}
               onKeyDown={(e: any) => { if (e.key === "Enter") onGenerate(); }}
               disabled={loading}
               w="80px"
@@ -122,6 +120,11 @@ export default function Header({
               }}
               _disabled={{ opacity: 0.6, cursor: "wait" }}
             />
+            {calories < min && (
+              <Text fontSize="0.7rem" color="#b45309" whiteSpace="nowrap">
+                Min {min}
+              </Text>
+            )}
             {loading && <Spinner size="sm" color="primary" borderWidth="2px" />}
           <chakra.button
             onClick={onGenerate}
