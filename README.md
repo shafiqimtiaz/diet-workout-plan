@@ -1,6 +1,6 @@
 # 🥗 Diet & Workout Plan
 
-AI-powered personalized diet and workout planner. Set your target daily calories, and Google Gemini generates a detailed 7-day meal plan and workout routine — bilingual in English and Bengali.
+AI-powered personalized diet and workout planner. Set your target daily calories, and Google Gemini generates a detailed 7-day meal plan and workout routine.
 
 **[🔗 diet-workout-plan.vercel.app](https://diet-workout-plan.vercel.app/)**
 
@@ -9,7 +9,6 @@ AI-powered personalized diet and workout planner. Set your target daily calories
 ## Features
 
 - **AI-generated plans** — Google Gemini creates weekly diet + workout plans tailored to your calorie target, cuisine preferences (Bangladeshi + Western), and home gym setup
-- **Bilingual** — Every meal, exercise, and tip is in English and Bengali. Toggle with one click
 - **Calorie input** — Type any target (1200–4000 cal) and the entire 7-day plan regenerates
 - **Caching** — Plans are cached by calorie value; revisiting a previous target is instant
 - **Smart fallback** — Without an API key, shows a detailed static 7-day plan (beef curry, salmon, dumbbell presses, trail runs…)
@@ -42,14 +41,13 @@ Without an API key, the app runs with the built-in static plan — no setup need
 ```
 src/
 ├── main.tsx                    # Entry point
-├── App.tsx                     # Root: language state, tab routing
-├── index.css                   # Design tokens + responsive styles
+├── App.tsx                     # Root: layout, tab routing
 ├── types/plan.ts               # TypeScript types
 ├── services/gemini.ts          # Gemini API + retry chain + JSON parsing
 ├── hooks/useGeminiPlan.ts      # Calorie → plan state machine
 ├── data/fallbackPlan.ts        # Static 7-day plan (used when API unavailable)
 └── components/
-    ├── Header.tsx              # Calorie input + language toggle
+    ├── Header.tsx              # Calorie input + generate button
     ├── TabNav.tsx              # Daily / Rules / Tips tabs
     ├── DailyPlan.tsx           # Diet + workout two-column layout
     ├── DaySelector.tsx         # 7-day pill selector
@@ -84,5 +82,5 @@ The response is parsed into typed `WeeklyPlan` objects and cached by calorie val
 | Build | Vite 8 |
 | Styling | CSS custom properties (design tokens) |
 | AI | Google Gemini (`gemini-2.5-flash-lite`) |
-| Fonts | DM Sans, Noto Sans Bengali, JetBrains Mono |
+| Fonts | DM Sans, JetBrains Mono |
 | Deploy | Vercel |

@@ -109,7 +109,11 @@ export default function ProfileBar({
           whiteSpace="nowrap"
           title={summary}
         >
-          👤 {summary}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ display: "inline-block", verticalAlign: "middle", marginRight: "0.25rem" }}>
+            <circle cx="12" cy="8" r="4" />
+            <path d="M20 21a8 8 0 0 0-16 0" />
+          </svg>
+          {summary}
         </Text>
         <Box
           as="button"

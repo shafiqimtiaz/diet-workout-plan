@@ -10,7 +10,7 @@ const ACCENT_STYLES = [
   { bg: "#FFF7ED", fg: "#C2410C" },
   { bg: "#EFF6FF", fg: "#1D4ED8" },
   { bg: "#F0FDFA", fg: "#0F766E" },
-  { bg: "#F5F3FF", fg: "#6D28D9" },
+  { bg: "#FEF3C7", fg: "#B45309" },
 ];
 
 export default function MealCard({ meal, index }: MealCardProps) {

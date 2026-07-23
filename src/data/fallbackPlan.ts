@@ -124,7 +124,7 @@ const STATIC_DAYS: DayPlan[] = [
           icon: "🌙",
           cal: 560,
           items: [
-            "Mung dal (মুগ ডাল)",
+            "Mung dal",
             "2 wheat roti",
             "2 boiled eggs",
             "Cucumber salad with lemon",
@@ -371,7 +371,7 @@ const STATIC_DAYS: DayPlan[] = [
           items: [
             "½ cup rice + masoor dal",
             "2 boiled eggs",
-            "Stir fried spinach (পালং শাক)",
+            "Stir fried spinach",
           ],
         },
       ],
@@ -526,7 +526,7 @@ const STATIC_DAYS: DayPlan[] = [
           items: [
             "½ cup rice + rohu / hilsa fish curry",
             "Masoor dal",
-            "Bottle gourd (লাউ) stir fry",
+            "Bottle gourd stir fry",
           ],
         },
       ],
