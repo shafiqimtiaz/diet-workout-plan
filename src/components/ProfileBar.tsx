@@ -71,8 +71,6 @@ export default function ProfileBar({
     return o ? t(o.en, o.bn) : a;
   };
 
-  const num = (v: string) => (v === "" ? 0 : Number(v));
-
   const startEdit = () => {
     setDraft(profile);
     setEditing(true);
@@ -167,9 +165,10 @@ export default function ProfileBar({
               min={3}
               max={8}
               value={draft.heightFt}
-              onChange={(e) =>
-                setDraft({ ...draft, heightFt: num(e.target.value) })
-              }
+              onChange={(e) => {
+                const v = e.target.valueAsNumber;
+                if (!Number.isNaN(v)) setDraft({ ...draft, heightFt: v });
+              }}
               {...numberInputProps}
             />
             <Text as="em" {...emStyle}>
@@ -180,9 +179,10 @@ export default function ProfileBar({
               min={0}
               max={11}
               value={draft.heightIn}
-              onChange={(e) =>
-                setDraft({ ...draft, heightIn: num(e.target.value) })
-              }
+              onChange={(e) => {
+                const v = e.target.valueAsNumber;
+                if (!Number.isNaN(v)) setDraft({ ...draft, heightIn: v });
+              }}
               {...numberInputProps}
             />
             <Text as="em" {...emStyle}>
@@ -199,9 +199,10 @@ export default function ProfileBar({
               min={30}
               max={250}
               value={draft.weightKg}
-              onChange={(e) =>
-                setDraft({ ...draft, weightKg: num(e.target.value) })
-              }
+              onChange={(e) => {
+                const v = e.target.valueAsNumber;
+                if (!Number.isNaN(v)) setDraft({ ...draft, weightKg: v });
+              }}
               {...numberInputProps}
             />
             <Text as="em" {...emStyle}>
@@ -217,7 +218,10 @@ export default function ProfileBar({
             min={13}
             max={100}
             value={draft.age}
-            onChange={(e) => setDraft({ ...draft, age: num(e.target.value) })}
+            onChange={(e) => {
+              const v = e.target.valueAsNumber;
+              if (!Number.isNaN(v)) setDraft({ ...draft, age: v });
+            }}
             {...numberInputProps}
           />
         </Flex>
