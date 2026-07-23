@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { generatePlan } from "../services/gemini";
-import { loadPlan, savePlan } from "../services/planStore";
 import { STATIC_PLAN } from "../data/fallbackPlan";
 import {
   computeCalories,
@@ -74,15 +73,18 @@ export function useGeminiPlan() {
       return;
     }
 
-    // 2 — persisted plan (IndexedDB) — reuse across reloads, no API call
-    const stored = await loadPlan(key);
-    if (stored) {
-      cacheRef.current[key] = stored;
-      setPlan(stored);
-      setUsingFallback(false);
-      setGeneratedFor({ calories: target, location });
-      return;
-    }
+    // 2 — persisted plan (localStorage) — reuse across reloads, no API call
+    try {
+      const raw = localStorage.getItem("plan:" + key);
+      if (raw) {
+        const stored = JSON.parse(raw) as WeeklyPlan;
+        cacheRef.current[key] = stored;
+        setPlan(stored);
+        setUsingFallback(false);
+        setGeneratedFor({ calories: target, location });
+        return;
+      }
+    } catch {}
 
     // 3 — generate fresh; cancel any in-flight request first
     abortRef.current?.abort();
@@ -95,7 +97,7 @@ export function useGeminiPlan() {
     try {
       const newPlan = await generatePlan(target, location, controller.signal);
       cacheRef.current[key] = newPlan;
-      void savePlan(key, newPlan);
+      try { localStorage.setItem("plan:" + key, JSON.stringify(newPlan)); } catch {}
       setPlan(newPlan);
       setUsingFallback(false);
       setGeneratedFor({ calories: target, location });

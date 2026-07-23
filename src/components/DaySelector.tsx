@@ -29,17 +29,17 @@ export default function DaySelector({
               borderColor={active ? "primary" : "border"}
               color={active ? "#ffffff" : "text"}
               borderRadius="10px"
-              px="0.5rem"
               py="0.75rem"
               textAlign="center"
               cursor="pointer"
               transition="all 150ms ease"
               flexShrink={0}
-              minW={{ base: "4rem", md: "auto" }}
+              minW="5rem"
+              px="0.75rem"
               _hover={
                 active
                   ? undefined
-                  : { borderColor: "neutral", transform: "translateY(-1px)" }
+                  : { borderColor: "neutral" }
               }
             >
             <Text
@@ -48,10 +48,11 @@ export default function DaySelector({
               fontWeight={700}
               fontSize="1.1rem"
               mb="0.25rem"
+              whiteSpace="nowrap"
             >
               {day.short}
             </Text>
-            <Text as="span" fontSize="0.8rem" opacity={0.8}>
+            <Text as="span" fontSize="0.8rem" opacity={0.8} whiteSpace="nowrap">
               {day.full}
             </Text>
           </Box>

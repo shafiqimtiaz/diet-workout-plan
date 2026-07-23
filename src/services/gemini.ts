@@ -224,27 +224,14 @@ async function runChunk(
           // fall through
         }
 
-        // 3 — regex-extract outermost JSON object, then try repairs
+        // 3 — regex-extract outermost JSON object, then try trailing-comma fix
         const match = raw.match(/(\{[\s\S]*\})/);
         if (!match) throw new Error("Failed to extract JSON from Gemini response");
 
         const extracted = match[1];
-        // 3a — with trailing-comma fix
+        // 3 — with trailing-comma fix
         try {
           return JSON.parse(extracted.replace(/,(\s*[\]}])/g, "$1"));
-        } catch {
-          // fall through
-        }
-
-          // 3b — handle unescaped control chars in strings
-          const escCtrl = extracted.replace(/[\u0000-\u001F\u007F]/g, (ch) =>
-            ch === "\t" ? "\\t" :
-            ch === "\n" ? "\\n" :
-            ch === "\r" ? "\\r" :
-            `\\u${ch.charCodeAt(0).toString(16).padStart(4, "0")}`
-          );
-        try {
-          return JSON.parse(escCtrl.replace(/,(\s*[\]}])/g, "$1"));
         } catch {
           // fall through
         }

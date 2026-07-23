@@ -1,5 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Box, Flex, Input, NativeSelect, Text } from "@chakra-ui/react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { UserIcon } from "@hugeicons/core-free-icons";
 import {
   computeCalories,
   type Profile,
@@ -109,10 +111,7 @@ export default function ProfileBar({
           whiteSpace="nowrap"
           title={summary}
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ display: "inline-block", verticalAlign: "middle", marginRight: "0.25rem" }}>
-            <circle cx="12" cy="8" r="4" />
-            <path d="M20 21a8 8 0 0 0-16 0" />
-          </svg>
+          <HugeiconsIcon icon={UserIcon} size={14} color="currentColor" strokeWidth={1.5} style={{ display: "inline-block", verticalAlign: "middle", marginRight: "0.25rem" }} />
           {summary}
         </Text>
         <Box
