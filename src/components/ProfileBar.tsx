@@ -131,7 +131,7 @@ export default function ProfileBar({
           cursor="pointer"
           transition="all 150ms ease"
           whiteSpace="nowrap"
-          _hover={{ bg: "#eff6ff" }}
+          _hover={{ bg: { _light: "#eff6ff", _dark: "#1e3a5f" } }}
         >
           {t("Edit", "সম্পাদনা")}
         </Box>
@@ -301,7 +301,7 @@ export default function ProfileBar({
           fontWeight={600}
           cursor="pointer"
           transition="all 150ms ease"
-          _hover={{ bg: "#eff6ff" }}
+          _hover={{ bg: { _light: "#eff6ff", _dark: "#1e3a5f" } }}
         >
           {t("Lock in", "লক করুন")}
         </Box>

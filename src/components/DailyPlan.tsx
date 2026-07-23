@@ -90,8 +90,8 @@ export default function DailyPlan({
               borderRadius="20px"
               fontSize="0.85rem"
               fontWeight={600}
-              bg="#EFF6FF"
-              color="#1D4ED8"
+              bg={{ _light: "#EFF6FF", _dark: "#1e3a5f" }}
+              color={{ _light: "#1D4ED8", _dark: "#93c5fd" }}
             >
               🎯 {lang === "en" ? day.workout.focus.en : day.workout.focus.bn}
             </Flex>
@@ -100,13 +100,13 @@ export default function DailyPlan({
           <Box
             borderLeftWidth="3px"
             borderLeftColor="primary"
-            bg="#eff6ff"
+            bg={{ _light: "#eff6ff", _dark: "#0f1b33" }}
             px="1rem"
             py="0.75rem"
             borderRadius="0 8px 8px 0"
             mb="1rem"
             fontSize="0.9rem"
-            color="#1e40af"
+            color={{ _light: "#1e40af", _dark: "#93c5fd" }}
           >
             <Box fontWeight={700} mb="0.25rem">
               {lang === "en" ? "🧠 Coach Tip" : "🧠 কোচের পরামর্শ"}

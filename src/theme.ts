@@ -1,6 +1,10 @@
 import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
 
 const config = defineConfig({
+  conditions: {
+    dark: "[data-theme=dark]",
+    light: "[data-theme=light]",
+  },
   theme: {
     tokens: {
       colors: {
@@ -18,6 +22,19 @@ const config = defineConfig({
         body: { value: '"DM Sans", "Noto Sans Bengali", sans-serif' },
         heading: { value: '"General Sans", "Noto Sans Bengali", sans-serif' },
         mono: { value: '"JetBrains Mono", monospace' },
+      },
+    },
+    semanticTokens: {
+      colors: {
+        bg: { value: { _light: "#f8fafc", _dark: "#0b1121" } },
+        surface: { value: { _light: "#ffffff", _dark: "#1e293b" } },
+        text: { value: { _light: "#0f172a", _dark: "#e2e8f0" } },
+        text2: { value: { _light: "#64748b", _dark: "#94a3b8" } },
+        border: { value: { _light: "#e2e8f0", _dark: "#334155" } },
+        primary: { value: { _light: "#2563eb", _dark: "#60a5fa" } },
+        primaryHover: { value: { _light: "#1d4ed8", _dark: "#3b82f6" } },
+        neutral: { value: { _light: "#94a3b8", _dark: "#64748b" } },
+        success: { value: { _light: "#10b981", _dark: "#34d399" } },
       },
     },
     keyframes: {
