@@ -8,10 +8,7 @@ import type {
   Bilingual,
 } from "../types/plan";
 
-// Model fallback chain — tries primary first (most quota headroom), then falls back on 429/rate errors
-const MODEL_CHAIN = [
-  "gemini-3.5-flash-lite",
-];
+const MODEL = "gemini-flash-lite-latest";
 const MAX_RETRIES = 2;
 
 const getApiKey = (): string => {
@@ -213,7 +210,7 @@ WORKOUTS:
 OUTPUT: Only the JSON object, nothing else.`;
 }
 
-/** Run one chunk through the model chain with retries; returns raw day objects. */
+/** Run one chunk with retries on rate limits; returns raw day objects. */
 async function runChunk(
   genAI: GoogleGenerativeAI,
   prompt: string,
@@ -221,67 +218,66 @@ async function runChunk(
 ): Promise<Record<string, unknown>[]> {
   let lastError: unknown = null;
 
-  for (const modelName of MODEL_CHAIN) {
-    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-      try {
-        // Abort check before each attempt
-        if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      // Abort check before each attempt
+      if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
 
-        const model = genAI.getGenerativeModel({
-          model: modelName,
-          generationConfig: {
-            maxOutputTokens: 8192,
-            temperature: 0.7,
-          },
-        });
+      const model = genAI.getGenerativeModel({
+        model: MODEL,
+        generationConfig: {
+          maxOutputTokens: 8192,
+          temperature: 0.7,
+        },
+      });
 
-        const result = await model.generateContent(prompt, {
-          signal: signal as AbortSignal | undefined,
-        });
+      const result = await model.generateContent(prompt, {
+        signal: signal as AbortSignal | undefined,
+      });
 
-        const finishReason = result.response.candidates?.[0]?.finishReason;
-        const text = result.response.text();
+      const finishReason = result.response.candidates?.[0]?.finishReason;
+      const text = result.response.text();
 
-        if (finishReason === "MAX_TOKENS") {
-          console.warn(
-            `[Gemini] Response truncated at ${text.length} chars (MAX_TOKENS)`,
-          );
+      if (finishReason === "MAX_TOKENS") {
+        console.warn(
+          `[Gemini] Response truncated at ${text.length} chars (MAX_TOKENS)`,
+        );
+      }
+
+      // Clean any markdown wrapping
+      const clean = text
+        .replace(/```json\s*/gi, "")
+        .replace(/```\s*/g, "")
+        .trim();
+
+      /** Attempt strict parse, then progressively relaxed repairs */
+      function tryParse(raw: string): Record<string, unknown> {
+        // 1 — strict parse
+        try {
+          return JSON.parse(raw);
+        } catch {
+          // fall through
         }
 
-        // Clean any markdown wrapping
-        const clean = text
-          .replace(/```json\s*/gi, "")
-          .replace(/```\s*/g, "")
-          .trim();
+        // 2 — strip trailing commas before ] or }
+        const noTrailing = raw.replace(/,(\s*[\]}])/g, "$1");
+        try {
+          return JSON.parse(noTrailing);
+        } catch {
+          // fall through
+        }
 
-        /** Attempt strict parse, then progressively relaxed repairs */
-        function tryParse(raw: string): Record<string, unknown> {
-          // 1 — strict parse
-          try {
-            return JSON.parse(raw);
-          } catch {
-            // fall through
-          }
+        // 3 — regex-extract outermost JSON object, then try repairs
+        const match = raw.match(/(\{[\s\S]*\})/);
+        if (!match) throw new Error("Failed to extract JSON from Gemini response");
 
-          // 2 — strip trailing commas before ] or }
-          const noTrailing = raw.replace(/,(\s*[\]}])/g, "$1");
-          try {
-            return JSON.parse(noTrailing);
-          } catch {
-            // fall through
-          }
-
-          // 3 — regex-extract outermost JSON object, then try repairs
-          const match = raw.match(/(\{[\s\S]*\})/);
-          if (!match) throw new Error("Failed to extract JSON from Gemini response");
-
-          const extracted = match[1];
-          // 3a — with trailing-comma fix
-          try {
-            return JSON.parse(extracted.replace(/,(\s*[\]}])/g, "$1"));
-          } catch {
-            // fall through
-          }
+        const extracted = match[1];
+        // 3a — with trailing-comma fix
+        try {
+          return JSON.parse(extracted.replace(/,(\s*[\]}])/g, "$1"));
+        } catch {
+          // fall through
+        }
 
           // 3b — handle unescaped control chars in strings (common with Bengali/emojis)
           const escCtrl = extracted.replace(/[\u0000-\u001F\u007F]/g, (ch) =>
@@ -290,61 +286,47 @@ async function runChunk(
             ch === "\r" ? "\\r" :
             `\\u${ch.charCodeAt(0).toString(16).padStart(4, "0")}`
           );
-          try {
-            return JSON.parse(escCtrl.replace(/,(\s*[\]}])/g, "$1"));
-          } catch {
-            // fall through
-          }
-
-          throw new Error("Failed to parse Gemini response after all repair attempts");
+        try {
+          return JSON.parse(escCtrl.replace(/,(\s*[\]}])/g, "$1"));
+        } catch {
+          // fall through
         }
 
-        const parsed = tryParse(clean);
-
-        const daysArr = (
-          Array.isArray(parsed.days) ? parsed.days : []
-        ) as Record<string, unknown>[];
-
-        if (daysArr.length === 0) {
-          throw new Error("Gemini returned empty plan");
-        }
-
-        return daysArr;
-      } catch (err: unknown) {
-        // Don't retry if aborted
-        if (err instanceof DOMException && err.name === "AbortError") throw err;
-
-        lastError = err;
-        const isLastAttempt =
-          attempt === MAX_RETRIES &&
-          modelName === MODEL_CHAIN[MODEL_CHAIN.length - 1];
-
-        if (isRateLimitError(err) && !isLastAttempt) {
-          const delay = extractRetryDelay(err);
-          console.warn(
-            `[Gemini] Rate limited on ${modelName}, retrying in ${delay}ms (attempt ${attempt + 1})...`,
-          );
-          await new Promise((r) => setTimeout(r, delay));
-          continue; // retry same model
-        }
-
-        if (
-          isRateLimitError(err) &&
-          modelName !== MODEL_CHAIN[MODEL_CHAIN.length - 1]
-        ) {
-          console.warn(
-            `[Gemini] ${modelName} quota exhausted, falling back to next model...`,
-          );
-          break; // break inner retry loop, try next model
-        }
-
-        // Non-rate-limit error or last model exhausted → throw
-        throw err;
+        throw new Error("Failed to parse Gemini response after all repair attempts");
       }
+
+      const parsed = tryParse(clean);
+
+      const daysArr = (
+        Array.isArray(parsed.days) ? parsed.days : []
+      ) as Record<string, unknown>[];
+
+      if (daysArr.length === 0) {
+        throw new Error("Gemini returned empty plan");
+      }
+
+      return daysArr;
+    } catch (err: unknown) {
+      // Don't retry if aborted
+      if (err instanceof DOMException && err.name === "AbortError") throw err;
+
+      lastError = err;
+
+      if (isRateLimitError(err) && attempt < MAX_RETRIES) {
+        const delay = extractRetryDelay(err);
+        console.warn(
+          `[Gemini] Rate limited, retrying in ${delay}ms (attempt ${attempt + 1})...`,
+        );
+        await new Promise((r) => setTimeout(r, delay));
+        continue;
+      }
+
+      // Non-rate-limit error or retries exhausted → throw
+      throw err;
     }
   }
 
-  throw lastError ?? new Error("All Gemini models exhausted");
+  throw lastError ?? new Error("Gemini generation failed");
 }
 
 export async function generatePlan(
