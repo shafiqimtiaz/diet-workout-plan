@@ -1,11 +1,14 @@
-import { useState, useEffect } from "react";
 import type { SupportedLanguage } from "../types/plan";
 
 interface HeaderProps {
   lang: SupportedLanguage;
   onToggleLang: () => void;
   calories: number;
-  onGenerate: (c: number) => void;
+  onCaloriesChange: (c: number) => void;
+  onGenerate: () => void;
+  min: number;
+  max: number;
+  dirty: boolean;
   loading: boolean;
 }
 
@@ -13,17 +16,13 @@ export default function Header({
   lang,
   onToggleLang,
   calories,
+  onCaloriesChange,
   onGenerate,
+  min,
+  max,
+  dirty,
   loading,
 }: HeaderProps) {
-  // Local draft so typing doesn't trigger generation on every keystroke.
-  const [draft, setDraft] = useState(calories);
-
-  // Sync when the committed value changes externally (e.g. clamping).
-  useEffect(() => setDraft(calories), [calories]);
-
-  const generate = () => onGenerate(draft);
-
   return (
     <header>
       <div className="header-content">
@@ -42,23 +41,31 @@ export default function Header({
             <input
               id="calorie-target"
               type="number"
-              min={1200}
-              max={4000}
+              min={min}
+              max={max}
               step={50}
-              value={draft}
-              onChange={(e) => setDraft(Number(e.target.value))}
+              value={calories}
+              onChange={(e) => onCaloriesChange(Number(e.target.value))}
               onKeyDown={(e) => {
-                if (e.key === "Enter") generate();
+                if (e.key === "Enter") onGenerate();
               }}
               disabled={loading}
             />
             {loading && <span className="spinner" />}
           </div>
           <button
-            className="btn btn-generate"
-            onClick={generate}
+            className={`btn btn-generate${dirty ? " is-dirty" : ""}`}
+            onClick={onGenerate}
             disabled={loading}
-            title={lang === "en" ? "Generate plan" : "প্ল্যান তৈরি করুন"}
+            title={
+              dirty
+                ? lang === "en"
+                  ? "Plan is out of date — regenerate"
+                  : "প্ল্যান পুরনো — পুনরায় তৈরি করুন"
+                : lang === "en"
+                  ? "Generate plan"
+                  : "প্ল্যান তৈরি করুন"
+            }
             aria-label={lang === "en" ? "Generate plan" : "প্ল্যান তৈরি করুন"}
           >
             <svg

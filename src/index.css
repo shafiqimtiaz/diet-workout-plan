@@ -205,6 +205,145 @@ header {
   display: block;
 }
 
+/* Dirty state — plan is stale, prompt the user to regenerate */
+.btn-generate.is-dirty {
+  border-color: #f59e0b;
+  color: #b45309;
+  background-color: #fef3c7;
+  animation: dirty-pulse 1.6s ease-in-out infinite;
+}
+
+.btn-generate.is-dirty:hover:not(:disabled) {
+  background-color: #fde68a;
+}
+
+@keyframes dirty-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0);
+  }
+}
+
+/* ===== Profile bar ===== */
+.profile-bar {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.6rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+  background-color: var(--surface);
+  font-size: 0.85rem;
+}
+
+.profile-summary {
+  color: var(--text2);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.btn-profile-edit {
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8rem;
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-profile-edit:hover {
+  background-color: #eff6ff;
+}
+
+.profile-bar-editing {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.profile-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  align-items: flex-end;
+}
+
+.profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.profile-field > span {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.profile-field input,
+.profile-field select {
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--bg);
+}
+
+.profile-field input[type="number"] {
+  width: 70px;
+  font-family: var(--font-mono);
+  text-align: center;
+}
+
+.profile-field-location {
+  flex: 1 1 200px;
+}
+
+.profile-field-location input {
+  width: 100%;
+}
+
+.profile-height,
+.profile-unit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.profile-height em,
+.profile-unit em {
+  font-style: normal;
+  font-size: 0.8rem;
+  color: var(--text2);
+}
+
+.profile-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.profile-recommended {
+  font-size: 0.85rem;
+  color: var(--text2);
+}
+
+.profile-recommended strong {
+  color: var(--primary);
+  font-family: var(--font-mono);
+}
+
 /* ===== Navigation Tabs ===== */
 .nav-tabs {
   display: flex;

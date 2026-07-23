@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { useGeminiPlan } from "./hooks/useGeminiPlan";
 import type { SupportedLanguage } from "./types/plan";
 import Header from "./components/Header";
+import ProfileBar from "./components/ProfileBar";
 import TabNav from "./components/TabNav";
 import DailyPlan from "./components/DailyPlan";
 import RulesList from "./components/RulesList";
@@ -13,8 +14,19 @@ export default function App() {
   const [activeTab, setActiveTab] = useState("daily");
   const [activeDay, setActiveDay] = useState(new Date().getDay());
 
-  const { calories, setCalories, plan, loading, error, usingFallback } =
-    useGeminiPlan();
+  const {
+    profile,
+    setProfile,
+    calories,
+    setCalories,
+    range,
+    generate,
+    dirty,
+    plan,
+    loading,
+    error,
+    usingFallback,
+  } = useGeminiPlan();
 
   const toggleLang = useCallback(() => {
     setLang((prev) => (prev === "en" ? "bn" : "en"));
@@ -28,9 +40,15 @@ export default function App() {
         lang={lang}
         onToggleLang={toggleLang}
         calories={calories}
-        onGenerate={setCalories}
+        onCaloriesChange={setCalories}
+        onGenerate={generate}
+        min={range.min}
+        max={range.max}
+        dirty={dirty}
         loading={loading}
       />
+
+      <ProfileBar lang={lang} profile={profile} onLockIn={setProfile} />
 
       <main className="container">
         <TabNav lang={lang} activeTab={activeTab} onTabChange={setActiveTab} />

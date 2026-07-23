@@ -1,5 +1,6 @@
-// Minimal IndexedDB persistence for generated weekly plans, keyed by calorie
-// target. Survives reloads so previously generated plans are reused instead of
+// Minimal IndexedDB persistence for generated weekly plans, keyed by a
+// composite string (calories + location) since both affect plan content.
+// Survives reloads so previously generated plans are reused instead of
 // re-calling Gemini. Degrades gracefully (no-op) when IndexedDB is unavailable.
 import type { WeeklyPlan } from "../types/plan";
 
@@ -21,12 +22,12 @@ function openDb(): Promise<IDBDatabase> {
   });
 }
 
-export async function loadPlan(calories: number): Promise<WeeklyPlan | null> {
+export async function loadPlan(key: string): Promise<WeeklyPlan | null> {
   try {
     const db = await openDb();
     return await new Promise((resolve, reject) => {
       const tx = db.transaction(STORE, "readonly");
-      const req = tx.objectStore(STORE).get(calories);
+      const req = tx.objectStore(STORE).get(key);
       req.onsuccess = () => resolve((req.result as WeeklyPlan) ?? null);
       req.onerror = () => reject(req.error);
     });
@@ -35,15 +36,12 @@ export async function loadPlan(calories: number): Promise<WeeklyPlan | null> {
   }
 }
 
-export async function savePlan(
-  calories: number,
-  plan: WeeklyPlan,
-): Promise<void> {
+export async function savePlan(key: string, plan: WeeklyPlan): Promise<void> {
   try {
     const db = await openDb();
     await new Promise<void>((resolve, reject) => {
       const tx = db.transaction(STORE, "readwrite");
-      tx.objectStore(STORE).put(plan, calories);
+      tx.objectStore(STORE).put(plan, key);
       tx.oncomplete = () => resolve();
       tx.onerror = () => reject(tx.error);
     });

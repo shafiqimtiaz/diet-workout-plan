@@ -106,16 +106,16 @@ function parseDay(obj: Record<string, unknown>): DayPlan {
 }
 
 // Fixed weekly workout schedule (index 0 = Sunday). The plan is generated in
-// chunks because gemini-3.5-flash-lite caps output at 8192 tokens — a full
-// bilingual 7-day plan does not fit in a single response.
+// chunks because the model caps output at 8192 tokens — a full bilingual
+// 7-day plan does not fit in a single response.
 const WEEKLY_SCHEDULE = [
-  "Active Rest · Mobility (Sunday) — gentle recovery, stretches near Andrew Haydon Park",
+  "Active Rest · Mobility (Sunday) — gentle recovery, light outdoor walk",
   "Strength · Push (Monday) — home gym: dumbbells, barbell, bench",
-  "Cardio · Trail (Tuesday) — Trans Canada Trail / Bayshore / Andrew Haydon Park",
+  "Cardio · Trail (Tuesday) — outdoor walk/run on a local trail or park",
   "Strength · Pull (Wednesday) — home gym: dumbbells, barbell, bench",
-  "Cardio · Bike (Thursday) — Trans Canada Trail / Andrew Haydon Park",
+  "Cardio · Bike (Thursday) — bicycle ride on a local route or park",
   "Strength · Legs (Friday) — home gym: dumbbells, barbell, bench",
-  "Endurance · Long Ride/Hike (Saturday) — Trans Canada Trail / Andrew Haydon Park",
+  "Endurance · Long Ride/Hike (Saturday) — long bicycle ride or hike on a local trail",
 ];
 
 // Chunk boundaries — [start, end) index ranges into WEEKLY_SCHEDULE.
@@ -128,12 +128,13 @@ function buildPrompt(
   targetCalories: number,
   schedule: string[],
   startIndex: number,
+  location: string,
 ): string {
   const dayList = schedule
     .map((s, i) => `  Day ${startIndex + i + 1}: ${s}`)
     .join("\n");
 
-  return `You are a professional nutritionist and fitness coach. Generate a HIGHLY DETAILED diet and workout plan for someone targeting ${targetCalories} calories per day. This person lives in Ottawa, Canada (near the Trans Canada Trail in Bayshore, close to Andrew Haydon Park) and enjoys Bangladeshi cuisine with a home gym (dumbbells, barbell, bench, bike, trail access).
+  return `You are a professional nutritionist and fitness coach. Generate a HIGHLY DETAILED diet and workout plan for someone targeting ${targetCalories} calories per day. This person lives in ${location} and enjoys Bangladeshi cuisine. They train with a home gym (dumbbells, barbell, bench) and a bicycle, plus access to local outdoor trails and parks — always assume dumbbells, barbell, bench, and a bicycle are available.
 
 Generate EXACTLY ${schedule.length} days, in this order, each with the specified workout focus:
 ${dayList}
@@ -201,7 +202,7 @@ MEALS:
 WORKOUTS:
 - EXACTLY 3-4 exercises per day, each with specific sets×reps, emoji, and a short technique detail.
 - Follow the workout focus assigned to each day above — do not change the order or type.
-- Cardio/endurance days MUST reference the Trans Canada Trail, Bayshore, or Andrew Haydon Park.
+- Cardio/endurance days MUST reference specific parks, trails, or outdoor routes in or near ${location}.
 - Strength days MUST reference home gym equipment: dumbbells, barbell, bench.
 - Coach tips MUST be 2 sentences, specific and motivational — not generic. Reference Ottawa weather (winter vs summer), trail conditions, Bangladeshi food habits, or desk-worker posture.
 - Exercise detail format: "X sets × Y-Z reps, [technique cue]". Example: "4 sets × 8-10 reps, controlled tempo, squeeze at top".
@@ -331,6 +332,7 @@ async function runChunk(
 
 export async function generatePlan(
   targetCalories: number,
+  location: string,
   signal?: AbortSignal,
 ): Promise<WeeklyPlan> {
   const apiKey = getApiKey();
@@ -346,7 +348,7 @@ export async function generatePlan(
   const allDays: Record<string, unknown>[] = [];
   for (const [start, end] of CHUNKS) {
     const schedule = WEEKLY_SCHEDULE.slice(start, end);
-    const prompt = buildPrompt(targetCalories, schedule, start);
+    const prompt = buildPrompt(targetCalories, schedule, start, location);
     const days = await runChunk(genAI, prompt, signal);
     allDays.push(...days);
   }
