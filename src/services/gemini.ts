@@ -222,15 +222,52 @@ OUTPUT: Only the JSON object, nothing else.`;
           .replace(/```\s*/g, "")
           .trim();
 
-        let parsed: Record<string, unknown>;
-        try {
-          parsed = JSON.parse(clean);
-        } catch {
-          // Try to extract JSON from the text
-          const match = clean.match(/(\{[\s\S]*\})/);
-          if (!match) throw new Error("Failed to parse Gemini response");
-          parsed = JSON.parse(match[1]);
+        /** Attempt strict parse, then progressively relaxed repairs */
+        function tryParse(raw: string): Record<string, unknown> {
+          // 1 — strict parse
+          try {
+            return JSON.parse(raw);
+          } catch {
+            // fall through
+          }
+
+          // 2 — strip trailing commas before ] or }
+          const noTrailing = raw.replace(/,(\s*[\]}])/g, "$1");
+          try {
+            return JSON.parse(noTrailing);
+          } catch {
+            // fall through
+          }
+
+          // 3 — regex-extract outermost JSON object, then try repairs
+          const match = raw.match(/(\{[\s\S]*\})/);
+          if (!match) throw new Error("Failed to extract JSON from Gemini response");
+
+          const extracted = match[1];
+          // 3a — with trailing-comma fix
+          try {
+            return JSON.parse(extracted.replace(/,(\s*[\]}])/g, "$1"));
+          } catch {
+            // fall through
+          }
+
+          // 3b — handle unescaped control chars in strings (common with Bengali/emojis)
+          const escCtrl = extracted.replace(/[\u0000-\u001F\u007F]/g, (ch) =>
+            ch === "\t" ? "\\t" :
+            ch === "\n" ? "\\n" :
+            ch === "\r" ? "\\r" :
+            `\\u${ch.charCodeAt(0).toString(16).padStart(4, "0")}`
+          );
+          try {
+            return JSON.parse(escCtrl.replace(/,(\s*[\]}])/g, "$1"));
+          } catch {
+            // fall through
+          }
+
+          throw new Error("Failed to parse Gemini response after all repair attempts");
         }
+
+        const parsed = tryParse(clean);
 
         const daysArr = (
           Array.isArray(parsed.days) ? parsed.days : []
