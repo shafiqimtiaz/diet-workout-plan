@@ -1,4 +1,4 @@
-import { Box, chakra, Flex, Heading, HStack, Input, Spinner } from "@chakra-ui/react";
+import { Box, chakra, Flex, Heading, Input, Spinner } from "@chakra-ui/react";
 import type { SupportedLanguage } from "../types/plan";
 
 interface HeaderProps {
@@ -33,34 +33,40 @@ export default function Header({
       position="sticky"
       top={0}
       zIndex={100}
-      px="1.5rem"
-      py="0.75rem"
+      px={{ base: "1rem", md: "1.5rem" }}
+      py={{ base: "0.6rem", md: "0.75rem" }}
     >
-      <Flex
-        maxW="1200px"
-        mx="auto"
-        justify="space-between"
-        align="center"
-        gap="1rem"
-      >
-        <Box>
-          <Heading
-            as="h1"
-            fontFamily="heading"
-            fontSize="1.35rem"
-            fontWeight={700}
-            color="text"
-            display="flex"
-            alignItems="center"
+        <Flex
+          maxW="1200px"
+          mx="auto"
+          justify="space-between"
+          align="center"
+          gap={{ base: "0.75rem", md: "1rem" }}
+          direction={{ base: "column", md: "row" }}
+        >
+          <Box>
+            <Heading
+              as="h1"
+              fontFamily="heading"
+              fontSize={{ base: "1.1rem", md: "1.35rem" }}
+              fontWeight={700}
+              color="text"
+              display="flex"
+              alignItems="center"
+              gap="0.5rem"
+            >
+              {lang === "en"
+                ? "Diet & Workout Plan"
+                : "ডায়েট ও ওয়ার্কআউট প্ল্যান"}
+            </Heading>
+          </Box>
+          <Flex
+            direction={{ base: "row", md: "row" }}
+            wrap="wrap"
+            justify="center"
+            align="center"
             gap="0.5rem"
           >
-            {lang === "en"
-              ? "Diet & Workout Plan"
-              : "ডায়েট ও ওয়ার্কআউট প্ল্যান"}
-          </Heading>
-        </Box>
-        <HStack gap="1rem" align="center">
-          <HStack gap="0.5rem" align="center">
             <chakra.label
               htmlFor="calorie-target"
               fontSize="0.85rem"
@@ -106,7 +112,6 @@ export default function Header({
               _disabled={{ opacity: 0.6, cursor: "wait" }}
             />
             {loading && <Spinner size="sm" color="primary" borderWidth="2px" />}
-          </HStack>
           <chakra.button
             onClick={onGenerate}
             disabled={loading}
@@ -175,8 +180,8 @@ export default function Header({
           >
             {lang === "en" ? "বাংলা" : "English"}
           </Box>
-        </HStack>
-      </Flex>
+          </Flex>
+        </Flex>
     </Box>
   );
 }

@@ -156,7 +156,7 @@ export default function ProfileBar({
       bg="surface"
       fontSize="0.85rem"
     >
-      <Flex wrap="wrap" gap="0.75rem 1.25rem" align="flex-end">
+      <Flex wrap="wrap" gap={{ base: "0.5rem 0.75rem", md: "0.75rem 1.25rem" }} align="flex-end">
         <Flex as="label" direction="column" gap="0.25rem">
           <FieldLabel>{t("Height", "উচ্চতা")}</FieldLabel>
           <Flex as="span" display="inline-flex" align="center" gap="0.3rem">

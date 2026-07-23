@@ -50,7 +50,7 @@ export default function App() {
 
       <ProfileBar lang={lang} profile={profile} onLockIn={setProfile} />
 
-      <Box as="main" w="100%" maxW="1200px" mx="auto" p="1.5rem">
+      <Box as="main" w="100%" maxW="1200px" mx="auto" p={{ base: "1rem", md: "1.5rem" }}>
         <TabNav lang={lang} activeTab={activeTab} onTabChange={setActiveTab} />
 
         {usingFallback && error && (
