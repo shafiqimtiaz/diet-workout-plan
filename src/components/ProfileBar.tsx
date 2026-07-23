@@ -74,8 +74,13 @@ export default function ProfileBar({
     setEditing(true);
   };
 
-  const lockIn = () => {
+  const save = () => {
     onLockIn(draft);
+    setEditing(false);
+  };
+
+  const cancel = () => {
+    setDraft(profile);
     setEditing(false);
   };
 
@@ -287,7 +292,26 @@ export default function ProfileBar({
         </Text>
         <Box
           as="button"
-          onClick={lockIn}
+          onClick={cancel}
+          px="1rem"
+          py="0.5rem"
+          borderWidth="1px"
+          borderColor="border"
+          color="text2"
+          bg="surface"
+          borderRadius="8px"
+          fontFamily="body"
+          fontSize="0.9rem"
+          fontWeight={500}
+          cursor="pointer"
+          transition="all 150ms ease"
+          _hover={{ borderColor: "neutral", color: "text" }}
+        >
+          Cancel
+        </Box>
+        <Box
+          as="button"
+          onClick={save}
           px="1rem"
           py="0.5rem"
           borderWidth="1px"
@@ -302,7 +326,7 @@ export default function ProfileBar({
           transition="all 150ms ease"
           _hover={{ bg: { _light: "#eff6ff", _dark: "#1e3a5f" } }}
         >
-          Lock in
+          Save
         </Box>
       </Flex>
     </Flex>
