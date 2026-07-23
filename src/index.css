@@ -183,6 +183,28 @@ header {
   background-color: #eff6ff;
 }
 
+/* Generate / regenerate icon button */
+.btn-generate {
+  padding: 0.45rem;
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-generate:hover:not(:disabled) {
+  background-color: #eff6ff;
+}
+
+.btn-generate:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.btn-generate svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
 /* ===== Navigation Tabs ===== */
 .nav-tabs {
   display: flex;

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { generatePlan } from "../services/gemini";
+import { loadPlan, savePlan } from "../services/planStore";
 import { STATIC_PLAN } from "../data/fallbackPlan";
 import type { WeeklyPlan } from "../types/plan";
 
@@ -18,13 +19,23 @@ export function useGeminiPlan() {
   const abortRef = useRef<AbortController | null>(null);
 
   const fetchPlan = useCallback(async (target: number) => {
-    // Check cache first
+    // 1 — in-memory cache (this session)
     if (cacheRef.current[target]) {
       setPlan(cacheRef.current[target]);
+      setUsingFallback(false);
       return;
     }
 
-    // Cancel any in-flight request
+    // 2 — persisted plan (IndexedDB) — reuse across reloads, no API call
+    const stored = await loadPlan(target);
+    if (stored) {
+      cacheRef.current[target] = stored;
+      setPlan(stored);
+      setUsingFallback(false);
+      return;
+    }
+
+    // 3 — generate fresh; cancel any in-flight request first
     abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
@@ -35,6 +46,7 @@ export function useGeminiPlan() {
     try {
       const newPlan = await generatePlan(target, controller.signal);
       cacheRef.current[target] = newPlan;
+      void savePlan(target, newPlan);
       setPlan(newPlan);
       setUsingFallback(false);
     } catch (err: unknown) {

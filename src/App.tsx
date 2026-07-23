@@ -28,7 +28,7 @@ export default function App() {
         lang={lang}
         onToggleLang={toggleLang}
         calories={calories}
-        onCaloriesChange={setCalories}
+        onGenerate={setCalories}
         loading={loading}
       />
 
