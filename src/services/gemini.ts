@@ -108,35 +108,38 @@ function parseDay(obj: Record<string, unknown>): DayPlan {
   };
 }
 
-export async function generatePlan(
+// Fixed weekly workout schedule (index 0 = Sunday). The plan is generated in
+// chunks because gemini-3.5-flash-lite caps output at 8192 tokens — a full
+// bilingual 7-day plan does not fit in a single response.
+const WEEKLY_SCHEDULE = [
+  "Active Rest · Mobility (Sunday) — gentle recovery, stretches near Andrew Haydon Park",
+  "Strength · Push (Monday) — home gym: dumbbells, barbell, bench",
+  "Cardio · Trail (Tuesday) — Trans Canada Trail / Bayshore / Andrew Haydon Park",
+  "Strength · Pull (Wednesday) — home gym: dumbbells, barbell, bench",
+  "Cardio · Bike (Thursday) — Trans Canada Trail / Andrew Haydon Park",
+  "Strength · Legs (Friday) — home gym: dumbbells, barbell, bench",
+  "Endurance · Long Ride/Hike (Saturday) — Trans Canada Trail / Andrew Haydon Park",
+];
+
+// Chunk boundaries — [start, end) index ranges into WEEKLY_SCHEDULE.
+const CHUNKS: [number, number][] = [
+  [0, 4],
+  [4, 7],
+];
+
+function buildPrompt(
   targetCalories: number,
-  signal?: AbortSignal,
-): Promise<WeeklyPlan> {
-  const apiKey = getApiKey();
+  schedule: string[],
+  startIndex: number,
+): string {
+  const dayList = schedule
+    .map((s, i) => `  Day ${startIndex + i + 1}: ${s}`)
+    .join("\n");
 
-  if (!apiKey || apiKey === "your_gemini_api_key_here") {
-    throw new Error("NO_API_KEY");
-  }
+  return `You are a professional nutritionist and fitness coach. Generate a HIGHLY DETAILED diet and workout plan for someone targeting ${targetCalories} calories per day. This person lives in Ottawa, Canada (near the Trans Canada Trail in Bayshore, close to Andrew Haydon Park) and enjoys Bangladeshi cuisine with a home gym (dumbbells, barbell, bench, bike, trail access).
 
-  const genAI = new GoogleGenerativeAI(apiKey);
-
-  let lastError: unknown = null;
-
-  for (const modelName of MODEL_CHAIN) {
-    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-      try {
-        // Abort check before each attempt
-        if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
-
-        const model = genAI.getGenerativeModel({
-          model: modelName,
-          generationConfig: {
-            maxOutputTokens: 8192,
-            temperature: 0.7,
-          },
-        });
-
-        const prompt = `You are a professional nutritionist and fitness coach. Generate a HIGHLY DETAILED 7-day diet and workout plan for someone targeting ${targetCalories} calories per day. This person lives in Ottawa, Canada (near the Trans Canada Trail in Bayshore, close to Andrew Haydon Park) and enjoys Bangladeshi cuisine with a home gym (dumbbells, barbell, bench, bike, trail access).
+Generate EXACTLY ${schedule.length} days, in this order, each with the specified workout focus:
+${dayList}
 
 IMPORTANT: ALL text MUST be in BOTH English (field_en) AND Bengali/Bangla (field_bn). Every string needs both translations with natural, native-level Bengali.
 
@@ -200,19 +203,50 @@ MEALS:
 
 WORKOUTS:
 - EXACTLY 3-4 exercises per day, each with specific sets×reps, emoji, and a short technique detail.
-- Alternate: Sun=ActiveRest, Mon=Strength(Push), Tue=Cardio(Trail), Wed=Strength(Pull), Thu=Cardio(Bike), Fri=Strength(Legs), Sat=Endurance(LongRide/Hike).
-- Cardio days (Tue, Thu, Sat) MUST reference the Trans Canada Trail, Bayshore, or Andrew Haydon Park.
+- Follow the workout focus assigned to each day above — do not change the order or type.
+- Cardio/endurance days MUST reference the Trans Canada Trail, Bayshore, or Andrew Haydon Park.
 - Strength days MUST reference home gym equipment: dumbbells, barbell, bench.
 - Coach tips MUST be 2 sentences, specific and motivational — not generic. Reference Ottawa weather (winter vs summer), trail conditions, Bangladeshi food habits, or desk-worker posture.
 - Exercise detail format: "X sets × Y-Z reps, [technique cue]". Example: "4 sets × 8-10 reps, controlled tempo, squeeze at top".
 - Sets field: compact notation like "4×8-10", "3×12-15", "3×max", "3×45s", "10 rounds". Use null only for warmup/cool-down/stretch.
 
 OUTPUT: Only the JSON object, nothing else.`;
+}
+
+/** Run one chunk through the model chain with retries; returns raw day objects. */
+async function runChunk(
+  genAI: GoogleGenerativeAI,
+  prompt: string,
+  signal?: AbortSignal,
+): Promise<Record<string, unknown>[]> {
+  let lastError: unknown = null;
+
+  for (const modelName of MODEL_CHAIN) {
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        // Abort check before each attempt
+        if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
+
+        const model = genAI.getGenerativeModel({
+          model: modelName,
+          generationConfig: {
+            maxOutputTokens: 8192,
+            temperature: 0.7,
+          },
+        });
 
         const result = await model.generateContent(prompt, {
           signal: signal as AbortSignal | undefined,
         });
+
+        const finishReason = result.response.candidates?.[0]?.finishReason;
         const text = result.response.text();
+
+        if (finishReason === "MAX_TOKENS") {
+          console.warn(
+            `[Gemini] Response truncated at ${text.length} chars (MAX_TOKENS)`,
+          );
+        }
 
         // Clean any markdown wrapping
         const clean = text
@@ -275,9 +309,7 @@ OUTPUT: Only the JSON object, nothing else.`;
           throw new Error("Gemini returned empty plan");
         }
 
-        return {
-          days: daysArr.map(parseDay),
-        };
+        return daysArr;
       } catch (err: unknown) {
         // Don't retry if aborted
         if (err instanceof DOMException && err.name === "AbortError") throw err;
@@ -313,4 +345,35 @@ OUTPUT: Only the JSON object, nothing else.`;
   }
 
   throw lastError ?? new Error("All Gemini models exhausted");
+}
+
+export async function generatePlan(
+  targetCalories: number,
+  signal?: AbortSignal,
+): Promise<WeeklyPlan> {
+  const apiKey = getApiKey();
+
+  if (!apiKey || apiKey === "your_gemini_api_key_here") {
+    throw new Error("NO_API_KEY");
+  }
+
+  const genAI = new GoogleGenerativeAI(apiKey);
+
+  // Generate the week in chunks so each response fits under the model's
+  // 8192-token output cap. Chunks are ordered, so we concatenate directly.
+  const allDays: Record<string, unknown>[] = [];
+  for (const [start, end] of CHUNKS) {
+    const schedule = WEEKLY_SCHEDULE.slice(start, end);
+    const prompt = buildPrompt(targetCalories, schedule, start);
+    const days = await runChunk(genAI, prompt, signal);
+    allDays.push(...days);
+  }
+
+  if (allDays.length === 0) {
+    throw new Error("Gemini returned empty plan");
+  }
+
+  return {
+    days: allDays.map(parseDay),
+  };
 }
